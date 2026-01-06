@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suppliers Management - SuperMaroc</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="suppliers.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-truck"></i> SuperMaroc - Suppliers Management
+            </a>
+            <div class="d-flex align-items-center">
+                <span class="text-light me-3">
+                    <i class="fas fa-store"></i> <strong id="currentStore">Agadir Store</strong>
+                </span>
+                <button class="btn btn-yellow me-3" id="createSupplierBtn">
+                    <i class="fas fa-plus"></i> New Supplier
+                </button>
+                <div class="dropdown">
+                    <button class="btn btn-yellow dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-cog"></i> Actions
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#" id="exportSuppliersBtn"><i class="fas fa-file-export"></i> Export Suppliers</a></li>
+                        <li><a class="dropdown-item" href="#" id="importSuppliersBtn"><i class="fas fa-file-import"></i> Import Suppliers</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#" id="bulkEmailBtn"><i class="fas fa-envelope"></i> Send Email</a></li>
+                        <li><a class="dropdown-item" href="#" id="generateReportBtn"><i class="fas fa-chart-bar"></i> Generate Report</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-2 p-0 sidebar">
+                <div class="pt-3">
+                    <a href="index.html">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a>
+                    <a href="products.html">
+                        <i class="fas fa-boxes"></i> Products
+                    </a>
+                    <a href="sales.html">
+                        <i class="fas fa-chart-line"></i> Sales
+                    </a>
+                    <a href="alerts.html">
+                        <i class="fas fa-exclamation-triangle"></i> Alerts
+                    </a>
+                    <a href="orders.html">
+                        <i class="fas fa-shopping-cart"></i> Orders
+                    </a>
+                    <a href="#" class="active">
+                        <i class="fas fa-truck"></i> Suppliers
+                    </a>
+                    <a href="inventory.html">
+                        <i class="fas fa-clipboard-check"></i> Inventory
+                    </a>
+                    <hr class="my-3">
+                    
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-10 p-4">
+                <!-- Stats Cards -->
+                <div class="row mb-4">
+                    <div class="col-md-3 col-sm-6">
+                        <div class="card stat-card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="card-title">ACTIVE SUPPLIERS</h6>
+                                        <h2 class="card-value" id="activeSuppliers">24</h2>
+                                        <p class="card-detail" id="supplierCategories">8 categories</p>
+                                        <p class="card-change positive">
+                                            <i class="fas fa-star"></i> 4.2/5 avg rating
+                                        </p>
+                                    </div>
+                                    <i class="fas fa-users fa-2x text-yellow"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="card stat-card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="card-title">PENDING ORDERS</h6>
+                                        <h2 class="card-value" id="pendingSupplierOrders">12</h2>
+                                        <p class="card-detail" id="pendingAmount">45,800 MAD</p>
+                                        <p class="card-change">
+                                            <i class="fas fa-truck"></i> 3 arriving today
+                                        </p>
+                                    </div>
+                                    <i class="fas fa-clipboard-list fa-2x text-warning"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="card stat-card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="card-title">SUPPLIER PERFORMANCE</h6>
+                                        <h2 class="card-value" id="onTimeDelivery">92%</h2>
+                                        <p class="card-detail">on-time delivery</p>
+                                        <p class="card-change positive">
+                                            <i class="fas fa-money-bill-wave"></i> 8.5% avg discount
+                                        </p>
+                                    </div>
+                                    <i class="fas fa-chart-line fa-2x text-success"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="card stat-card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="card-title">TOP SUPPLIER</h6>
+                                        <h3 class="card-value" id="topSupplierName">Fresh Foods Co.</h3>
+                                        <p class="card-detail">95% satisfaction</p>
+                                        <p class="card-change positive">
+                                            <i class="fas fa-trophy"></i> Best performer
+                                        </p>
+                                    </div>
+                                    <i class="fas fa-crown fa-2x text-info"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions & Status -->
+                <div class="row mb-4">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header card-header-yellow">
+                                <h5 class="mb-0"><i class="fas fa-chart-pie"></i> Suppliers by Category</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-3 col-6 mb-3">
+                                        <div class="category-box fresh">
+                                            <div class="category-count" id="categoryFresh">8</div>
+                                            <div class="category-label">Fresh Products</div>
+                                            <i class="fas fa-apple-alt"></i>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-6 mb-3">
+                                        <div class="category-box dry">
+                                            <div class="category-count" id="categoryDry">5</div>
+                                            <div class="category-label">Dry Goods</div>
+                                            <i class="fas fa-wheat-awn"></i>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-6 mb-3">
+                                        <div class="category-box beverages">
+                                            <div class="category-count" id="categoryBeverages">4</div>
+                                            <div class="category-label">Beverages</div>
+                                            <i class="fas fa-wine-bottle"></i>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-6 mb-3">
+                                        <div class="category-box hygiene">
+                                            <div class="category-count" id="categoryHygiene">7</div>
+                                            <div class="category-label">Hygiene & Beauty</div>
+                                            <i class="fas fa-soap"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header card-header-yellow">
+                                <h5 class="mb-0"><i class="fas fa-bolt"></i> Quick Actions</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-grid gap-2">
+                                    <button class="btn btn-yellow" id="placeOrderBtn">
+                                        <i class="fas fa-cart-plus"></i> Place New Order
+                                    </button>
+                                    <button class="btn btn-yellow" id="checkInvoicesBtn">
+                                        <i class="fas fa-file-invoice-dollar"></i> Check Invoices
+                                    </button>
+                                    <button class="btn btn-yellow" id="evaluateSuppliersBtn">
+                                        <i class="fas fa-star"></i> Evaluate Suppliers
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Suppliers Table -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header card-header-yellow d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0"><i class="fas fa-table"></i> All Suppliers</h5>
+                                <div class="btn-group">
+                                    <button class="btn btn-yellow btn-sm" id="refreshSuppliersBtn">
+                                        <i class="fas fa-sync-alt"></i> Refresh
+                                    </button>
+                                    <button class="btn btn-yellow btn-sm" id="filterSuppliersBtn">
+                                        <i class="fas fa-filter"></i> Filter
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <!-- Filter Bar -->
+                                <div class="row mb-3">
+                                    <div class="col-md-3">
+                                        <input type="text" class="form-control" id="supplierSearch" placeholder="Search suppliers...">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select class="form-select" id="categoryFilter">
+                                            <option value="">All Categories</option>
+                                            <option value="fresh">Fresh Products</option>
+                                            <option value="dry">Dry Goods</option>
+                                            <option value="beverages">Beverages</option>
+                                            <option value="hygiene">Hygiene & Beauty</option>
+                                            <option value="cleaning">Cleaning</option>
+                                            <option value="equipment">Equipment</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select class="form-select" id="statusFilter">
+                                            <option value="">All Status</option>
+                                            <option value="active">Active</option>
+                                            <option value="inactive">Inactive</option>
+                                            <option value="pending">Pending</option>
+                                            <option value="preferred">Preferred</option>
+                                            <option value="blocked">Blocked</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select class="form-select" id="ratingFilter">
+                                            <option value="">All Ratings</option>
+                                            <option value="5">★★★★★ (5)</option>
+                                            <option value="4">★★★★☆ (4+)</option>
+                                            <option value="3">★★★☆☆ (3+)</option>
+                                            <option value="2">★★☆☆☆ (2+)</option>
+                                            <option value="1">★☆☆☆☆ (1+)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <!-- Suppliers Table -->
+                                <div class="table-responsive">
+                                    <table class="table table-hover" id="suppliersTable">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th width="50">
+                                                    <input type="checkbox" id="selectAllSuppliers">
+                                                </th>
+                                                <th width="100">Supplier ID</th>
+                                                <th>Supplier Name</th>
+                                                <th width="150">Category</th>
+                                                <th width="120">Contact</th>
+                                                <th width="120">Performance</th>
+                                                <th width="150">Last Order</th>
+                                                <th width="150">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="suppliersTableBody">
+                                            <!-- Suppliers will be loaded here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
+                                <!-- Table Footer -->
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <div>
+                                        <span class="text-muted" id="supplierCountText">Showing 0 suppliers</span>
+                                    </div>
+                                    <nav>
+                                        <ul class="pagination mb-0">
+                                            <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+                                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                                        </ul>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header card-header-yellow">
+                                <h5 class="mb-0"><i class="fas fa-history"></i> Recent Supplier Activity</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="timeline" id="supplierTimeline">
+                                    <!-- Timeline items will be loaded here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Supplier Modal -->
+    <div class="modal fade" id="createSupplierModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header modal-header-yellow">
+                    <h5 class="modal-title"><i class="fas fa-plus-circle"></i> Add New Supplier</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="supplierForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card mb-3">
+                                    <div class="card-header">
+                                        <h6 class="mb-0"><i class="fas fa-info-circle"></i> Basic Information</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">Supplier Name *</label>
+                                                <input type="text" class="form-control" id="supplierName" required>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">Tax ID / SIRET</label>
+                                                <input type="text" class="form-control" id="taxId">
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Category *</label>
+                                            <select class="form-select" id="supplierCategory" required>
+                                                <option value="">Select category...</option>
+                                                <option value="fresh">Fresh Products</option>
+                                                <option value="dry">Dry Goods</option>
+                                                <option value="beverages">Beverages</option>
+                                                <option value="hygiene">Hygiene & Beauty</option>
+                                                <option value="cleaning">Cleaning Products</option>
+                                                <option value="equipment">Equipment</option>
+                                                <option value="services">Services</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Company Address</label>
+                                            <textarea class="form-control" id="companyAddress" rows="2"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card mb-3">
+                                    <div class="card-header">
+                                        <h6 class="mb-0"><i class="fas fa-user-tie"></i> Contact Information</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">Primary Contact *</label>
+                                                <input type="text" class="form-control" id="primaryContact" required>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">Phone Number *</label>
+                                                <input type="tel" class="form-control" id="primaryPhone" required>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Email Address *</label>
+                                            <input type="email" class="form-control" id="primaryEmail" required>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">Secondary Contact</label>
+                                                <input type="text" class="form-control" id="secondaryContact">
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">Secondary Phone</label>
+                                                <input type="tel" class="form-control" id="secondaryPhone">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Financial Information -->
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="fas fa-money-bill-wave"></i> Financial Information</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">Payment Terms</label>
+                                        <select class="form-select" id="paymentTerms">
+                                            <option value="30 days">30 days</option>
+                                            <option value="15 days">15 days</option>
+                                            <option value="7 days">7 days</option>
+                                            <option value="Cash on delivery">Cash on delivery</option>
+                                            <option value="Advance payment">Advance payment</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">Credit Limit (MAD)</label>
+                                        <input type="number" class="form-control" id="creditLimit" value="50000">
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">Discount (%)</label>
+                                        <input type="number" class="form-control" id="discount" step="0.1" min="0" max="100" value="5">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Bank Name</label>
+                                        <input type="text" class="form-control" id="bankName">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Bank Account</label>
+                                        <input type="text" class="form-control" id="bankAccount">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Additional Information -->
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="fas fa-file-alt"></i> Additional Information</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <label class="form-label">Notes / Special Instructions</label>
+                                    <textarea class="form-control" id="supplierNotes" rows="3"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Certifications (comma separated)</label>
+                                    <input type="text" class="form-control" id="certifications" placeholder="ISO9001, HACCP, Organic, etc.">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Status</label>
+                                    <select class="form-select" id="supplierStatus">
+                                        <option value="active">Active</option>
+                                        <option value="pending">Pending</option>
+                                        <option value="inactive">Inactive</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-yellow" id="saveSupplierBtn">
+                        <i class="fas fa-save"></i> Save Supplier
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Supplier Details Modal -->
+    <div class="modal fade" id="supplierDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header modal-header-yellow">
+                    <h5 class="modal-title"><i class="fas fa-info-circle"></i> Supplier Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="supplierDetailsContent">
+                        <!-- Supplier details will be loaded here -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-yellow" id="editSupplierBtn">
+                        <i class="fas fa-edit"></i> Edit Supplier
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Place Order Modal -->
+    <div class="modal fade" id="placeOrderModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header modal-header-yellow">
+                    <h5 class="modal-title"><i class="fas fa-cart-plus"></i> Place New Order</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="orderSupplierForm">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Select Supplier *</label>
+                                <select class="form-select" id="orderSupplierSelect" required>
+                                    <option value="">Select supplier...</option>
+                                    <!-- Suppliers will be loaded here -->
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Delivery Date *</label>
+                                <input type="date" class="form-control" id="orderDeliveryDate" required>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Products *</label>
+                            <div class="table-responsive">
+                                <table class="table" id="orderProductsTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Product</th>
+                                            <th width="120">Current Stock</th>
+                                            <th width="150">Order Quantity</th>
+                                            <th width="120">Unit Price</th>
+                                            <th width="120">Total</th>
+                                            <th width="50">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="orderProductsBody">
+                                        <!-- Products will be added here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <button type="button" class="btn btn-yellow btn-sm mt-2" id="addProductToOrderBtn">
+                                <i class="fas fa-plus"></i> Add Product
+                            </button>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Shipping Instructions</label>
+                                    <textarea class="form-control" id="shippingInstructions" rows="2"></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="order-summary">
+                                    <div class="summary-row">
+                                        <span>Subtotal:</span>
+                                        <span id="orderSubtotal">0.00 MAD</span>
+                                    </div>
+                                    <div class="summary-row">
+                                        <span>Discount:</span>
+                                        <span id="orderDiscount">0.00 MAD</span>
+                                    </div>
+                                    <div class="summary-row">
+                                        <span>Shipping:</span>
+                                        <span id="orderShipping">0.00 MAD</span>
+                                    </div>
+                                    <div class="summary-row total">
+                                        <span><strong>Total:</strong></span>
+                                        <span id="orderTotal"><strong>0.00 MAD</strong></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-yellow" id="submitOrderBtn">
+                        <i class="fas fa-paper-plane"></i> Submit Order
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Evaluate Supplier Modal -->
+    <div class="modal fade" id="evaluateSupplierModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header modal-header-yellow">
+                    <h5 class="modal-title"><i class="fas fa-star"></i> Evaluate Supplier</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="evaluationForm">
+                        <div class="mb-3">
+                            <label class="form-label">Supplier</label>
+                            <select class="form-select" id="evaluateSupplierSelect" required>
+                                <option value="">Select supplier...</option>
+                                <!-- Suppliers will be loaded here -->
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Overall Rating</label>
+                            <div class="rating-stars">
+                                <i class="fas fa-star" data-rating="1"></i>
+                                <i class="fas fa-star" data-rating="2"></i>
+                                <i class="fas fa-star" data-rating="3"></i>
+                                <i class="fas fa-star" data-rating="4"></i>
+                                <i class="fas fa-star" data-rating="5"></i>
+                            </div>
+                            <input type="hidden" id="overallRating" value="0">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Comments</label>
+                            <textarea class="form-control" id="evaluationComments" rows="3" placeholder="Share your feedback about this supplier..."></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-yellow" id="submitEvaluationBtn">
+                        <i class="fas fa-check"></i> Submit Evaluation
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script src="suppliers.js"></script>
+</body>
+</html>

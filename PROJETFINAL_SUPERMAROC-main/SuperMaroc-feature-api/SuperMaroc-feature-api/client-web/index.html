@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SuperMaret</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="index.css">
+
+
+</head>
+
+<body>
+    <!--HEADER PART-->
+    <header>
+        <nav class="navbar flex between wrapper">
+            <a href="#" class="logo">SuperMarket</a>
+            <!-- DESTOP MENU-->
+            <ul class="navlist flex gap-3">
+                <li>
+                    <a href="#home">Home</a>
+                </li>
+                <li>
+                    <a href="#services">Services</a>
+                </li>
+                <li>
+                    <a href="#products">Products</a>
+                </li>
+                <li>
+                    <a href="#review">Review</a>
+                </li>
+                <li>
+                    <a href="#contact">Contact</a>
+                </li>
+            </ul>
+
+            <div class="desktop-action flex gap-2">
+                <a href="#" class="cart-icon">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                    <span class="cart-value">0</span>
+                </a>
+
+                <a id="loginBtn" class="btn">Login</a>
+                <a id="logoutBtn" class="btn" style="display:none;">Logout</a>
+                <a id="profileBtn" class="" style="display:none;">My Account</a>
+
+
+
+
+
+                <a href="#" class="bars">
+                    <i class="fa-solid fa-bars"></i>
+                </a>
+            </div>
+
+            <!-- MOBILE MENU -->
+            <ul class="mobile-menu">
+                <li>
+                    <a href="#">Home</a>
+                </li>
+                <li>
+                    <a href="#">Produits</a>
+                </li>
+                <li>
+                    <a href="#">Services</a>
+                </li>
+                <li>
+                    <a href="#">About us</a>
+                </li>
+                <li>
+                    <a href="#">Contacts</a>
+                </li>
+                <li>
+                    <a href="#" class="btn">
+                        Sign in
+                        &nbsp;
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                </a>
+                </li>
+            </ul>
+        </nav>
+
+    </header>
+    <!--SECTION PART-->
+    <main>
+        <section id="home">
+
+            <div class="hero-section flex wrapper gap-4">
+                <div class="content">
+                    <h1>Smart shopping
+                        <br> made<span> Simple..</span>
+                    </h1>
+                    <p class="para">
+                        Take your courses in one click, from the comfort of your home.
+                        <br>And enjoy our fast and reliable service.
+                    </p>
+                    <div class="flex gap-2">
+                        <a href="products.html" class="btn ">Order now</a>
+                        <a href=" # " class="social-icons ">
+                            <i class="fa-brands fa-facebook-f "></i>
+                        </a>
+                        <a href="# " class="social-icons ">
+                            <i class="fa-brands fa-x-twitter "></i>
+                        </a>
+                        <a href="# " class="social-icons ">
+                            <i class="fa-brands fa-instagram "></i>
+                        </a>
+                        <a href="# " class="social-icons ">
+                            <i class="fa-brands fa-google-plus-g "></i>
+                        </a>
+
+                    </div>
+
+                </div>
+                <div class="image-container ">
+                    <img src="image/302-removebg-preview (1).png " alt=" " style="width: 750px; height: auto; ">
+                </div>
+
+
+            </div>
+
+        </section>
+        <section id="services ">
+            <div class="wrapper p-top ">
+                <div class="text-center ">
+                    <h5>Our services</h5>
+                    <h2>How does it work?</h2>
+                </div>
+
+                <div class="flex text-center mt-4 gap-4 ">
+                    <div class="service-card ">
+                        <div class="images-container ">
+                            <img src="image/7.png " alt=" " style="width: 100px; height: auto; display: block; margin: 0 auto; ">
+                        </div>
+                        <h3>Easy to Order</h3>
+                        <p>Place your order in just a few clicks—simple, fast, and hassle-free. Enjoy a smooth shopping experience designed to save you time every day.</p>
+                    </div>
+
+                    <div class="service-card ">
+                        <div class="images-container ">
+                            <img src="image/6.png " alt=" " style="width: 100px; height: auto; display: block; margin: 0 auto; ">
+                        </div>
+                        <h3>Fast Delivery</h3>
+                        <p>Get your groceries delivered quickly and right on time. We ensure fast and reliable delivery so you never have to wait for what you need.</p>
+                    </div>
+
+                    <div class="service-card ">
+                        <div class="images-container ">
+                            <img src="image/5.png " alt=" " style="width: 100px; height: auto; display: block; margin: 0 auto; ">
+                        </div>
+                        <h3>Best Quality</h3>
+                        <p>We offer only the freshest and highest-quality products for you and your family. Quality you can trust, every time you shop with us.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="products">
+            <div class="wrapper p-top ">
+                <div class="text-center ">
+                    <h5>Our Products</h5>
+                    <h2>Shop the Best!</h2>
+                </div>
+
+
+                <div class="card-list text-center flex mt-4 gap-2 ">
+                    <!--
+                    <div class="order-card ">
+                        <div class="card-image ">
+                            <img src="image/555.png ">
+                        </div>
+                        <h4>Lesieur</h4>
+                        <h4 class="price ">200DHs</h4>
+                        <a href="# " class="btn ">Add to Card</a>
+                    </div>-->
+                </div>
+                <div class="text-center mt-4 ">
+                    <a href="products.html" class="">Voir plus</a>
+                </div>
+
+
+                <!-- CART TAB-->
+                <div class="cart-tab">
+
+                    <h3>Your Cart</h3>
+                    <div class="cart-list">
+
+                        <!--
+                        <div class="item ">
+                        <div class="item-image ">
+                            <img src="image/555.png ">
+                        </div>
+                        <div>
+                            <h4>Le lait de nature</h4>
+                            <h4 class="item-total ">$200</h4>
+                        </div>
+                        <div class="flex ">
+                            <a href="# " class="quantity-btn ">
+                                <i class="fa-solid fa-minus "></i>
+                            </a>
+                            <h4 class="quatity-value ">1</h4>
+                            <a href="# " class="quantity-btn ">
+                                <i class="fa-solid fa-plus "></i>
+                            </a>
+                        </div>
+                        
+                    </div>-->
+
+                    </div>
+                    <div class="total-container">
+                        <h4>Total :</h4>
+                        <h4 class="cart-total ">$0.00</h4>
+                    </div>
+                    <div class="btn-container flex gap-2 ">
+                        <a href="# " class="btn close-btn ">close</a>
+                        <a href="#" class="btn" id="checkoutBtn">buy</a>
+                        <a href="# " class="btn clear-cart ">Empty</a>
+                    </div>
+                </div>
+
+
+
+                <div id="checkoutModal" class="modal">
+                    <div class="modal-content ">
+                        <span class="close ">&times;</span>
+                        <h2>Votre informations</h2>
+                        <form id="checkoutForm ">
+                            <div class="form-group ">
+                                <label for="name ">Name :</label>
+                                <input type="text " id="name " name="name " placeholder="Votre nom " required>
+                            </div>
+                            <div class="form-group ">
+                                <label for="address ">Adress :</label>
+                                <input type="text " id="address " name="address " placeholder="Votre adresse " required>
+                            </div>
+                            <div class="form-group ">
+                                <label for="phone ">Phone number :</label>
+                                <input type="tel " id="phone " name="phone " placeholder="Ex: 06xxxxxxxx " required>
+                            </div>
+                            <button type="submit " class="submit-btn ">Send</button>
+                        </form>
+                    </div>
+                </div>
+
+
+
+
+            </div>
+        </section>
+
+
+
+        <section id="review">
+            <div class="wrapper p-top flex gap-3">
+                <div class="image-container ">
+                    <img src="image/88-removebg-preview.png" style="width: 500px;height: auto; ">
+                </div>
+
+                <div class="review-container ">
+                    <h5>Our reviews</h5>
+                    <h2 style="text-align: left;">What they say</h2>
+
+
+                    <div class=" swiper mySwiper ">
+                        <div class="swiper-wrapper mt-4 ">
+
+
+                            <div class="swiper-slide ">
+                                <div class="flex gap-2 ">
+                                    <div class="profile ">
+                                        <img src="image/9.jpg " alt=" ">
+                                    </div>
+
+
+                                    <div>
+                                        <h4>khadija Anejjar</h4>
+                                        <div class="mt-half ">
+                                            <i class="fa-solid fa-star "></i>
+                                            <i class="fa-solid fa-star "></i>
+                                            <i class="fa-solid fa-star "></i>
+                                            <i class="fa-solid fa-star "></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p>Very easy to order and super convenient. I’ll definitely shop again! <br>Love this online supermarket! Makes grocery shopping so simple.</p>
+                            </div>
+
+
+
+
+                            <div class="swiper-slide ">
+                                <div class="flex gap-2 ">
+                                    <div class="profile ">
+                                        <img src="image/33.jpeg " alt=" ">
+                                    </div>
+
+
+                                    <div>
+                                        <h4>Salma </h4>
+                                        <div class="mt-half ">
+                                            <i class="fa-solid fa-star "></i>
+                                            <i class="fa-solid fa-star "></i>
+                                            <i class="fa-solid fa-star "></i>
+                                            <i class="fa-solid fa-star "></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p>Amazing service! My order arrived quickly and everything was fresh.
+                                    <br>Fast delivery and excellent customer service. Totally satisfied!</brW>
+                                </p>
+                            </div>
+
+
+
+
+                        </div>
+                        <div class="flex between ">
+                            <a href="# " class="arrow" id="prev">
+                                <i class="fa-solid fa-arrow-left "></i>
+                            </a>
+                            <a href="# " class="arrow" id="next">
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </a>
+                        </div>
+
+
+                    </div>
+
+
+
+                </div>
+
+
+            </div>
+        </section>
+
+
+        <section>
+            <div class="wrapper p-top ">
+                <div class="app-container flex between ">
+                    <div class="image-container ">
+                        <img src="image/5555.png ">
+                    </div>
+
+                    <div class="content ">
+                        <h5>Our Application</h5>
+                        <h2 style="text-align: left;">Your Groceries, Delivered <br>Fast & Fresh! </h2>
+                        <p class="para ">Skip the lines and shop from the comfort of your home. Enjoy fresh,<br>high-quality products delivered straight to your door—quick, easy, and hassle-free!</p>
+
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <section>
+            <div class="wrapper p-top ">
+                <div class="text-center ">
+                    <h5>Our Subscribe</h5>
+                    <h2>Share Your Experience</h2>
+                    <p class="para m-auto ">We’d love to hear from you! Tell us what you think about our products and service—your feedback helps us serve you better.</p>
+
+                    <label class="input-container flex ">
+
+                        <div class="review-form">
+
+
+                            <textarea id="review-text" placeholder="Write your comment..."></textarea>
+
+                            <select id="review-stars">
+                                <option value="5">⭐⭐⭐⭐⭐ (5)</option>
+                                <option value="4">⭐⭐⭐⭐ (4)</option>
+                                <option value="3">⭐⭐⭐ (3)</option>
+                                <option value="2">⭐⭐ (2)</option>
+                                <option value="1">⭐ (1)</option>
+
+        
+                            </select>
+
+                            <button id="submit-review" class="btn">Submit Review</button>
+                        </div>
+
+                    </label>
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+    <!--FOOTER PART-->
+    <FOOTER id="contact ">
+        <div class="footer-container ">
+            <div class="flex wrapper gap-4 ">
+                <div class="footer-wrapper ">
+                    <a href="# " class="logo ">SuperMarket</a>
+
+                    <p class="mt-one-half ">
+                        Faites vos courses en un clic, depuis chez vous
+                        <br>Et profitez de notre service rapide et fiable.
+                    </p>
+
+                    <div class="flex gap-2 mt-one-half ">
+
+                        <a href="# " class="social-icons ">
+                            <i class="fa-brands fa-facebook-f "></i>
+                        </a>
+                        <a href="# " class="social-icons ">
+                            <i class="fa-brands fa-x-twitter "></i>
+                        </a>
+                        <a href="# " class="social-icons ">
+                            <i class="fa-brands fa-instagram "></i>
+                        </a>
+                        <a href="# " class="social-icons ">
+                            <i class="fa-brands fa-google-plus-g "></i>
+                        </a>
+
+                    </div>
+                </div>
+                <ul class="footer-wrapper ">
+                    <li>
+                        <h4>Our Menu</h4>
+                    </li>
+                    <li class="mt-one-half ">
+                        <a href="# " class="footer-link ">Special</a>
+                    </li>
+
+                    <li class="mt-one-half ">
+                        <a href="# " class="footer-link ">Popular</a>
+                    </li>
+                    <li class="mt-one-half ">
+                        <a href="# " class="footer-link ">Category</a>
+                    </li>
+
+                </ul>
+                <ul class="footer-wrapper ">
+                    <li>
+                        <h4>Company</h4>
+                    </li>
+                    <li class="mt-one-half ">
+                        <a href="# " class="footer-link ">Why SsuperMarket</a>
+                    </li>
+
+                    <li class="mt-one-half ">
+                        <a href="# " class="footer-link ">partner with us</a>
+                    </li>
+                    <li class="mt-one-half ">
+                        <a href="# " class="footer-link ">About us</a>
+                    </li>
+                    <li class="mt-one-half ">
+                        <a href="# " class="footer-link ">FAQ's</a>
+                    </li>
+
+                </ul>
+                <ul class="footer-wrapper ">
+                    <li>
+                        <h4>Support</h4>
+                    </li>
+                    <li class="mt-one-half ">
+                        <a href="# " class="footer-link ">Account</a>
+                    </li>
+
+                    <li class="mt-one-half ">
+                        <a href="# " class="footer-link ">support center</a>
+                    </li>
+                    <li class="mt-one-half ">
+                        <a href="# " class="footer-link ">contact</a>
+                    </li>
+
+                </ul>
+
+            </div>
+        </div>
+
+    </FOOTER>
+
+    <!-- LOGIN MODAL -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close login-close">&times;</span>
+            <h2>Login</h2>
+
+
+
+            <form id="loginForm">
+                <input type="email" id="loginEmail" placeholder="Email" required>
+                <input type="password" id="loginPassword" placeholder="Password" required>
+                <button type="submit" class="btn">Login</button>
+            </form>
+
+            <p>Pas de compte ? <a href="#" id="openSignup">Créer un compte</a></p>
+
+
+        </div>
+    </div>
+
+    <!-- SIGNUP MODAL -->
+    <div id="signupModal" class="modal">
+        <div class="modal-content">
+            <span class="close signup-close">&times;</span>
+            <h2>Créer un compte</h2>
+
+            <form id="signupForm">
+                <input type="text" id="signupName" placeholder="Votre nom" required>
+                <input type="email" id="signupEmail" placeholder="Email" required>
+                <input type="password" id="signupPassword" placeholder="Mot de passe" required>
+                <input type="password" id="signupPassword2" placeholder="Confirmez le mot de passe" required>
+
+
+
+                <button type="submit" class="btn">S'inscrire</button>
+            </form>
+
+            <p>Déjà un compte ? <a href="#" id="openLogin">Se connecter</a></p>
+        </div>
+    </div>
+
+
+
+    <!-- PROFILE MODAL -->
+    <div id="profileModal" class="modal">
+        <div class="modal-content profile-box">
+            <span class="close profile-close">&times;</span>
+            <span id="welcomeMsg" style="margin-left:10px; display:none;"></span>
+            <h2>account</h2>
+
+
+            <!-- ZONE PHOTO -->
+            <div class="profile-photo-container">
+                <img id="profilePhoto" src="image/default-user.png" alt="Photo profil">
+                <button class="btn upload-btn" id="uploadPhotoBtn">Changer la photo</button>
+                <input type="file" id="photoInput" accept="image/*" style="display:none;">
+            </div>
+
+            <!-- Infos -->
+            <p><strong>Nom :</strong> <span id="profileName"></span></p>
+            <p><strong>Email :</strong> <span id="profileEmail"></span></p>
+
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js"></script>
+
+    <script src="products.js"></script>
+    <script defer src="script.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js"></script>
+
+
+
+</body>
+
+
+
+
+</html>
+
+</html>
+
+</html>
+
+</html>

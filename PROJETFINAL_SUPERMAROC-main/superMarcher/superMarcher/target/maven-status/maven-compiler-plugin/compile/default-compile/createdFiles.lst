@@ -1,0 +1,17 @@
+rmi\AuthService.class
+service\ClientServiceImpl.class
+util\TestDB.class
+service\AdminServiceImpl.class
+service\AdminServiceServer.class
+dto\UserDTO.class
+util\DBConnection.class
+rmi\RMIServer.class
+dao\TestProductDAO.class
+dto\ProductDTO.class
+dto\SuperMarcher.class
+rmi\RMIClient.class
+service\ClientService.class
+service\AdminService.class
+service\AuthServiceImpl.class
+dao\ProductDAO.class
+rmi\RMIAdmin.class

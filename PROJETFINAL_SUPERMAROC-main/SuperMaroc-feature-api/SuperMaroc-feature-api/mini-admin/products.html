@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products Management - SuperMaroc</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.bootstrap5.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="products.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-store"></i> SuperMaroc - Products Management
+            </a>
+            <div class="d-flex align-items-center">
+                <span class="text-light me-3">
+                    <i class="fas fa-map-marker-alt"></i> <strong>Agadir Store</strong>
+                </span>
+                <button class="btn btn-yellow" id="syncButton">
+                    <i class="fas fa-sync-alt"></i> Sync
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-2 p-0 sidebar">
+                <div class="pt-3">
+                    <a href="index.html">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a>
+                    <a href="#" class="active">
+                        <i class="fas fa-boxes"></i> Products
+                    </a>
+                    <a href="sales.html">
+                        <i class="fas fa-chart-line"></i> Sales
+                    </a>
+                    <a href="alerts.html">
+                        <i class="fas fa-exclamation-triangle"></i> Alerts
+                    </a>
+                    <a href="orders.html">
+                        <i class="fas fa-shopping-cart"></i> Orders
+                    </a>
+                    <a href="suppliers.html">
+                        <i class="fas fa-truck"></i> Suppliers
+                    </a>
+                    <a href="inventory.html">
+                        <i class="fas fa-clipboard-check"></i> Inventory
+                    </a>
+                    <hr class="my-3">
+                    
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-10 p-4">
+                <!-- Quick Actions -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header card-header-yellow">
+                                <h5 class="mb-0"><i class="fas fa-bolt"></i> Quick Actions</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex flex-wrap justify-content-center">
+                                    <div class="quick-action-btn" data-bs-toggle="modal" data-bs-target="#addProductModal">
+                                        <i class="fas fa-plus-circle"></i>
+                                        <span>Add Product</span>
+                                    </div>
+                                    <div class="quick-action-btn" id="scanBarcodeBtn">
+                                        <i class="fas fa-barcode"></i>
+                                        <span>Scan Barcode</span>
+                                    </div>
+                                    <div class="quick-action-btn" id="exportCSVBtn">
+                                        <i class="fas fa-file-export"></i>
+                                        <span>Export CSV</span>
+                                    </div>
+                                    <div class="quick-action-btn" id="printTagsBtn">
+                                        <i class="fas fa-tag"></i>
+                                        <span>Print Tags</span>
+                                    </div>
+                                    <div class="quick-action-btn" id="lowStockBtn">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                        <span>Low Stock</span>
+                                    </div>
+                                    <div class="quick-action-btn" id="expiringBtn">
+                                        <i class="fas fa-calendar-times"></i>
+                                        <span>Expiring Soon</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Categories Filter -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6 class="mb-3"><i class="fas fa-filter"></i> Filter by Category:</h6>
+                                <div class="category-filters-container">
+                                    <div id="category-filters">
+                                        <!-- Category badges will be generated here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Products Table -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header card-header-yellow d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0"><i class="fas fa-list"></i> Product Catalog</h5>
+                                <div>
+                                    <div class="btn-group" role="group">
+                                        <button type="button" class="btn btn-yellow btn-sm" id="addProductBtn">
+                                            <i class="fas fa-plus"></i> Add Product
+                                        </button>
+                                        <button type="button" class="btn btn-yellow btn-sm dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown">
+                                            <span class="visually-hidden">Toggle Dropdown</span>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><a class="dropdown-item" href="#" id="exportPDFBtn"><i class="fas fa-file-pdf"></i> Export PDF</a></li>
+                                            <li><a class="dropdown-item" href="#" id="exportExcelBtn"><i class="fas fa-file-excel"></i> Export Excel</a></li>
+                                            <li><a class="dropdown-item" href="#" id="exportCSVBtn2"><i class="fas fa-file-csv"></i> Export CSV</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <!-- Filters Bar -->
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                            <input type="text" class="form-control" id="productSearch" placeholder="Search products...">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select class="form-select" id="statusFilter">
+                                            <option value="">All Status</option>
+                                            <option value="in-stock">In Stock</option>
+                                            <option value="low-stock">Low Stock</option>
+                                            <option value="out-of-stock">Out of Stock</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select class="form-select" id="categoryFilter">
+                                            <option value="">All Categories</option>
+                                            <!-- Categories will be populated by JS -->
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button class="btn btn-yellow w-100" id="clearFiltersBtn">
+                                            <i class="fas fa-times"></i> Clear
+                                        </button>
+                                    </div>
+                                </div>
+
+                               <!-- Products Table -->
+<div class="table-responsive">
+    <table class="table table-hover table-striped" id="productsTable">
+        <thead class="table-dark">
+            <tr>
+                <th width="50">ID</th>
+                <th>Produit</th>
+                <th width="150">Stock</th>
+                <th width="100">Prix</th>
+                <th width="150">Magasin</th>
+                <th width="100">Image</th>
+                <th width="180">Actions</th>
+            </tr>
+        </thead>
+        <tbody id="productsTableBody">
+            <!-- Products will be loaded here -->
+        </tbody>
+    </table>
+</div>
+                                
+                                <!-- Table Footer -->
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <div>
+                                        <span class="text-muted" id="productCountText">Showing 0 products</span>
+                                    </div>
+                                    <div>
+                                        <div class="btn-group" role="group">
+                                            <button class="btn btn-yellow btn-sm" id="refreshProductsBtn">
+                                                <i class="fas fa-sync-alt"></i> Refresh
+                                            </button>
+                                            <button class="btn btn-danger btn-sm" id="deleteSelectedBtn">
+                                                <i class="fas fa-trash"></i> Delete Selected
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Statistics -->
+                <div class="row mt-4">
+                    <div class="col-md-3 col-sm-6">
+                        <div class="card stat-card">
+                            <div class="card-body text-center">
+                                <i class="fas fa-boxes fa-2x text-primary mb-3"></i>
+                                <h6 class="card-title">Total Products</h6>
+                                <h2 class="card-value" id="totalProducts">0</h2>
+                                <p class="card-text text-success small">
+                                    <i class="fas fa-arrow-up"></i> <span id="weeklyChange">0</span> this week
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="card stat-card">
+                            <div class="card-body text-center">
+                                <i class="fas fa-exclamation-triangle fa-2x text-warning mb-3"></i>
+                                <h6 class="card-title">Low Stock</h6>
+                                <h2 class="card-value text-warning" id="lowStockCount">0</h2>
+                                <p class="card-text">
+                                    <span id="outOfStockCount" class="text-danger">0</span> out of stock
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="card stat-card">
+                            <div class="card-body text-center">
+                                <i class="fas fa-money-bill-wave fa-2x text-success mb-3"></i>
+                                <h6 class="card-title">Stock Value</h6>
+                                <h2 class="card-value text-success" id="totalStockValue">0 MAD</h2>
+                                <p class="card-text text-muted small">Avg: <span id="avgPrice">0</span> MAD</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="card stat-card">
+                            <div class="card-body text-center">
+                                <i class="fas fa-calendar-times fa-2x text-danger mb-3"></i>
+                                <h6 class="card-title">Expiring Soon</h6>
+                                <h2 class="card-value text-danger" id="expiringCount">0</h2>
+                                <p class="card-text text-muted small">Within 7 days</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<!-- Add Product Modal -->
+<div class="modal fade" id="addProductModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header modal-header-yellow">
+        <h5 class="modal-title" id="modalTitle"><i class="fas fa-plus-circle"></i> Add New Product</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="productForm">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Product Name *</label>
+              <input type="text" class="form-control" id="productName" required>
+            </div>
+            <div class="col-md-6 mb-3">
+  <label class="form-label">Category *</label>
+  <select class="form-select" id="categoryId" required>
+    <option value="">Select category...</option>
+    <option value="1">Fruits</option>
+    <option value="2">Beverages</option>
+    <option value="3">Dairy</option>
+  </select>
+</div>
+
+<div class="col-md-6 mb-3">
+  <label class="form-label">Store *</label>
+  <select class="form-select" id="storeId" required>
+    <option value="">Select store...</option>
+    <option value="1">Store 1</option>
+    <option value="2">Store 2</option>
+  </select>
+</div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Image URL *</label>
+<input type="text" class="form-control" id="imagePath" placeholder="http://localhost:8888/images/1.jpg" required>            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Selling Price (MAD) *</label>
+              <input type="number" class="form-control" id="sellingPrice" step="0.01" required>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Current Stock *</label>
+              <input type="number" class="form-control" id="currentStock" required>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea class="form-control" id="description" rows="2"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-yellow" id="saveProductBtn">
+          <i class="fas fa-save"></i> Save Product
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <!-- DataTables -->
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script src="products.js"></script>
+</body>
+</html>
