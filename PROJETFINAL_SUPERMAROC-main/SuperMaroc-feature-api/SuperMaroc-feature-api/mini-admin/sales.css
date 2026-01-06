@@ -1,0 +1,825 @@
+/* ===== COLOR VARIABLES ===== */
+:root {
+    --yellow-primary: #FFD700;
+    --yellow-dark: #FFC107;
+    --yellow-light: #FFF3CD;
+    --white-bg: #FFFFFF;
+    --white-pure: #FFFFFF;
+    --gray-light: #F8F9FA;
+    --gray-medium: #E9ECEF;
+    --gray-dark: #6C757D;
+    --black: #212529;
+    --blue-dark: #1E3A5F;
+    --success: #28A745;
+    --danger: #DC3545;
+    --warning: #FFC107;
+    --info: #17A2B8;
+    --purple: #6F42C1;
+}
+
+/* ===== RESET & BASE ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--white-bg);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: var(--black);
+    line-height: 1.6;
+}
+
+/* ===== NAVBAR ===== */
+.navbar {
+    background-color: var(--blue-dark) !important;
+    border-bottom: 3px solid var(--yellow-primary);
+    padding: 12px 0;
+}
+
+.navbar-brand {
+    font-weight: bold;
+    color: var(--yellow-primary) !important;
+    font-size: 1.4rem;
+}
+
+.navbar-brand i {
+    color: var(--yellow-primary);
+    margin-right: 10px;
+}
+
+/* ===== BUTTONS ===== */
+.btn-yellow {
+    background-color: var(--yellow-primary) !important;
+    color: var(--black) !important;
+    border: none;
+    font-weight: 600;
+    padding: 8px 20px;
+    border-radius: 5px;
+    transition: all 0.3s;
+}
+
+.btn-yellow:hover {
+    background-color: var(--yellow-dark) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.btn-yellow:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-yellow.active {
+    background-color: var(--yellow-dark) !important;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.btn-yellow.btn-sm {
+    padding: 5px 15px;
+    font-size: 0.9rem;
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar {
+    background-color: var(--white-pure);
+    color: var(--black);
+    min-height: calc(100vh - 56px);
+    border-right: 1px solid var(--gray-medium);
+    box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+}
+
+.sidebar a {
+    color: var(--gray-dark);
+    text-decoration: none;
+    display: block;
+    padding: 12px 20px;
+    border-left: 4px solid transparent;
+    transition: all 0.3s;
+    font-weight: 500;
+}
+
+.sidebar a:hover, .sidebar a.active {
+    color: var(--black);
+    background-color: var(--yellow-light);
+    border-left-color: var(--yellow-primary);
+}
+
+.sidebar a.active {
+    font-weight: 600;
+}
+
+.sidebar i {
+    width: 25px;
+    text-align: center;
+    color: var(--gray-dark);
+}
+
+.sidebar a:hover i, .sidebar a.active i {
+    color: var(--yellow-dark);
+}
+
+/* ===== MAIN CONTENT ===== */
+.main-content {
+    padding: 20px;
+    background-color: var(--white-bg);
+}
+
+/* ===== KPI CARDS ===== */
+.stat-card {
+    background-color: var(--white-pure);
+    border-radius: 10px;
+    border: 1px solid var(--gray-medium);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    transition: transform 0.3s;
+    margin-bottom: 20px;
+    height: 100%;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+}
+
+.stat-card .card-body {
+    padding: 20px;
+}
+
+.stat-card .card-title {
+    color: var(--gray-dark);
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 5px;
+}
+
+.stat-card .card-value {
+    color: var(--blue-dark);
+    font-weight: 700;
+    font-size: 1.8rem;
+    margin: 10px 0;
+    line-height: 1;
+}
+
+.stat-card .card-change {
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-top: 10px;
+}
+
+.stat-card .card-change.positive {
+    color: var(--success);
+}
+
+.stat-card .card-change.negative {
+    color: var(--danger);
+}
+
+.stat-card i {
+    font-size: 1.8rem;
+    opacity: 0.8;
+}
+
+/* ===== CHARTS ===== */
+.card {
+    background-color: var(--white-pure);
+    border-radius: 10px;
+    border: 1px solid var(--gray-medium);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    margin-bottom: 20px;
+}
+
+.card-header-yellow {
+    background-color: var(--yellow-primary) !important;
+    color: var(--black) !important;
+    border-bottom: 2px solid var(--yellow-dark);
+    font-weight: 600;
+    padding: 15px 20px;
+    border-radius: 10px 10px 0 0 !important;
+}
+
+.card-header-yellow h5 {
+    font-weight: 700;
+    color: var(--black);
+    margin: 0;
+}
+
+.card-header-yellow h5 i {
+    margin-right: 10px;
+}
+
+.chart-container {
+    position: relative;
+    height: 250px;
+    margin-bottom: 10px;
+}
+
+/* ===== TOP PRODUCTS TABLE ===== */
+.table-responsive {
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--gray-medium);
+}
+
+.table {
+    background-color: var(--white-pure);
+    color: var(--black);
+    margin-bottom: 0;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.table thead th {
+    background-color: var(--gray-light);
+    color: var(--black);
+    font-weight: 600;
+    border: none;
+    padding: 12px;
+    vertical-align: middle;
+    border-bottom: 2px solid var(--yellow-primary);
+}
+
+.table tbody tr {
+    transition: all 0.3s;
+}
+
+.table tbody tr:hover {
+    background-color: var(--yellow-light) !important;
+}
+
+.table tbody td {
+    padding: 12px;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--gray-medium);
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: var(--gray-light);
+}
+
+/* ===== HOURLY PATTERN ===== */
+.peak-indicator {
+    text-align: center;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: var(--gray-light);
+    margin: 5px;
+}
+
+.peak-indicator i {
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+}
+
+.peak-indicator.morning i {
+    color: var(--warning);
+}
+
+.peak-indicator.afternoon i {
+    color: var(--info);
+}
+
+.peak-indicator.evening i {
+    color: var(--purple);
+}
+
+.peak-indicator div {
+    font-size: 0.8rem;
+    color: var(--gray-dark);
+    margin-bottom: 2px;
+}
+
+.peak-indicator strong {
+    font-size: 0.9rem;
+    color: var(--black);
+}
+
+/* ===== COMPARISON ===== */
+.comparison-container {
+    padding: 10px 0;
+}
+
+.comparison-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: var(--gray-light);
+    border-radius: 8px;
+}
+
+.comparison-label {
+    width: 200px;
+    font-weight: 600;
+    color: var(--black);
+    font-size: 0.9rem;
+}
+
+.comparison-bar {
+    flex: 1;
+    height: 30px;
+    background-color: var(--gray-medium);
+    border-radius: 15px;
+    position: relative;
+    overflow: hidden;
+    margin: 0 20px;
+}
+
+.comparison-bar .bar {
+    height: 100%;
+    position: absolute;
+    left: 0;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    color: white;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.comparison-bar .bar.today {
+    background-color: var(--success);
+}
+
+.comparison-bar .bar.yesterday {
+    background-color: var(--info);
+    opacity: 0.8;
+}
+
+.comparison-change {
+    width: 60px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.comparison-change.positive {
+    color: var(--success);
+}
+
+.comparison-change.negative {
+    color: var(--danger);
+}
+
+/* ===== STORE COMPARISON ===== */
+.store-stats {
+    padding: 10px;
+    background-color: var(--gray-light);
+    border-radius: 8px;
+}
+
+.store-stat {
+    text-align: center;
+    padding: 10px;
+}
+
+.store-name {
+    font-weight: 600;
+    color: var(--black);
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+}
+
+.store-revenue {
+    font-weight: 700;
+    color: var(--blue-dark);
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+}
+
+.store-change {
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.store-change.positive {
+    color: var(--success);
+}
+
+.store-change.negative {
+    color: var(--danger);
+}
+
+/* ===== DATE RANGE PICKER ===== */
+#dateRangePicker {
+    background-color: var(--white-pure);
+    color: var(--black);
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    border: 1px solid var(--gray-medium);
+    transition: all 0.3s;
+}
+
+#dateRangePicker:hover {
+    background-color: var(--yellow-light);
+    border-color: var(--yellow-primary);
+}
+
+#dateRangePicker i {
+    color: var(--yellow-dark);
+}
+
+#dateRangeText {
+    font-weight: 600;
+}
+
+/* ===== FILTER CONTROLS ===== */
+.filter-controls {
+    background-color: var(--gray-light);
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.filter-controls .form-control,
+.filter-controls .form-select {
+    background-color: var(--white-pure);
+    border: 1px solid var(--gray-medium);
+    color: var(--black);
+    border-radius: 5px;
+    padding: 10px 15px;
+    font-size: 0.95rem;
+}
+
+.filter-controls .form-control:focus,
+.filter-controls .form-select:focus {
+    border-color: var(--yellow-primary);
+    box-shadow: 0 0 0 0.25rem rgba(255, 215, 0, 0.25);
+    background-color: var(--white-pure);
+    outline: none;
+}
+
+/* ===== TRANSACTION STATUS ===== */
+.status-badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: inline-block;
+    text-align: center;
+    min-width: 80px;
+}
+
+.status-completed {
+    background-color: rgba(40, 167, 69, 0.1);
+    color: var(--success);
+    border: 1px solid var(--success);
+}
+
+.status-pending {
+    background-color: rgba(255, 193, 7, 0.1);
+    color: var(--warning);
+    border: 1px solid var(--warning);
+}
+
+.status-refunded {
+    background-color: rgba(108, 117, 125, 0.1);
+    color: var(--gray-dark);
+    border: 1px solid var(--gray-dark);
+}
+
+/* ===== PAYMENT METHOD BADGES ===== */
+.payment-badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.payment-cash {
+    background-color: rgba(40, 167, 69, 0.1);
+    color: var(--success);
+}
+
+.payment-card {
+    background-color: rgba(13, 110, 253, 0.1);
+    color: #0d6efd;
+}
+
+.payment-mobile {
+    background-color: rgba(111, 66, 193, 0.1);
+    color: var(--purple);
+}
+
+/* ===== ACTION BUTTONS ===== */
+.action-buttons {
+    display: flex;
+    gap: 5px;
+}
+
+.btn-action {
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: all 0.3s;
+    font-size: 0.85rem;
+    border: 1px solid transparent;
+    background-color: transparent;
+}
+
+.btn-action:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.btn-action-view {
+    color: var(--info);
+    border-color: rgba(23, 162, 184, 0.2);
+}
+
+.btn-action-view:hover {
+    background-color: rgba(23, 162, 184, 0.1);
+}
+
+.btn-action-refund {
+    color: var(--danger);
+    border-color: rgba(220, 53, 69, 0.2);
+}
+
+.btn-action-refund:hover {
+    background-color: rgba(220, 53, 69, 0.1);
+}
+
+/* ===== MODALS ===== */
+.modal-header-yellow {
+    background-color: var(--yellow-primary) !important;
+    color: var(--black) !important;
+    border-bottom: 2px solid var(--yellow-dark);
+    padding: 15px 20px;
+}
+
+.modal-header-yellow .modal-title {
+    font-weight: 700;
+    margin: 0;
+}
+
+.modal-header-yellow .modal-title i {
+    margin-right: 10px;
+}
+
+.modal-header-yellow .btn-close {
+    filter: invert(0.5);
+    opacity: 1;
+}
+
+/* ===== FORM CONTROLS ===== */
+.form-control, .form-select {
+    background-color: var(--white-pure);
+    border: 1px solid var(--gray-medium);
+    color: var(--black);
+    border-radius: 5px;
+    padding: 10px 15px;
+    font-size: 0.95rem;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--yellow-primary);
+    box-shadow: 0 0 0 0.25rem rgba(255, 215, 0, 0.25);
+    background-color: var(--white-pure);
+    outline: none;
+}
+
+.form-label {
+    color: var(--black);
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+
+.form-check-input:checked {
+    background-color: var(--yellow-primary);
+    border-color: var(--yellow-primary);
+}
+
+/* ===== PAGINATION ===== */
+.pagination .page-link {
+    color: var(--blue-dark);
+    border: 1px solid var(--gray-medium);
+    padding: 8px 12px;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: var(--yellow-primary);
+    border-color: var(--yellow-primary);
+    color: var(--black);
+}
+
+.pagination .page-link:hover {
+    background-color: var(--yellow-light);
+    border-color: var(--yellow-primary);
+}
+
+/* ===== LEGEND ===== */
+.legend-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.85rem;
+}
+
+.legend-color {
+    width: 15px;
+    height: 15px;
+    border-radius: 3px;
+}
+
+/* ===== NO DATA MESSAGE ===== */
+.no-data {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--gray-dark);
+}
+
+.no-data i {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    color: var(--gray-medium);
+}
+
+.no-data h5 {
+    margin-bottom: 10px;
+    color: var(--gray-dark);
+}
+
+/* ===== LOADING SPINNER ===== */
+.loading-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid var(--gray-light);
+    border-top-color: var(--yellow-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ===== NOTIFICATIONS ===== */
+.notification-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    max-width: 400px;
+}
+
+.notification {
+    background-color: var(--white-pure);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    padding: 15px;
+    margin-bottom: 10px;
+    border-left: 4px solid;
+    animation: slideIn 0.3s ease-out;
+}
+
+.notification.success {
+    border-left-color: var(--success);
+}
+
+.notification.error {
+    border-left-color: var(--danger);
+}
+
+.notification.warning {
+    border-left-color: var(--warning);
+}
+
+.notification.info {
+    border-left-color: var(--info);
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 768px) {
+    .sidebar {
+        min-height: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--gray-medium);
+    }
+    
+    .main-content {
+        padding: 15px !important;
+    }
+    
+    .stat-card .card-value {
+        font-size: 1.5rem;
+    }
+    
+    .chart-container {
+        height: 200px;
+    }
+    
+    .comparison-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .comparison-label {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+    
+    .comparison-bar {
+        width: 100%;
+        margin: 10px 0;
+    }
+    
+    .comparison-change {
+        width: 100%;
+        text-align: right;
+    }
+    
+    .table-responsive {
+        font-size: 0.9rem;
+    }
+    
+    .table th, .table td {
+        padding: 8px;
+    }
+}
+
+@media (max-width: 576px) {
+    .stat-card .card-value {
+        font-size: 1.2rem;
+    }
+    
+    .btn-yellow {
+        padding: 6px 12px;
+        font-size: 0.9rem;
+    }
+    
+    .peak-indicator {
+        padding: 5px;
+    }
+    
+    .peak-indicator i {
+        font-size: 1.2rem;
+    }
+}
+
+/* ===== UTILITY CLASSES ===== */
+.text-yellow {
+    color: var(--yellow-dark) !important;
+}
+
+.bg-yellow-light {
+    background-color: var(--yellow-light) !important;
+}
+
+.border-yellow {
+    border-color: var(--yellow-primary) !important;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.text-ellipsis {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--gray-light);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--yellow-dark);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--yellow-primary);
+}

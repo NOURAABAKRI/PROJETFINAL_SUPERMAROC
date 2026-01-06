@@ -1,0 +1,61 @@
+
+# ✅ SuperMaroc – Script SQL EXPLICATION DES TABLES
+1️⃣ stores – Magasins
+
+Contient la liste des magasins avec leur nom et localisation.
+
+Rôle : Identifier et gérer chaque magasin séparément.
+
+2️⃣ categories – Catégories de produits
+
+Contient les différentes catégories de produits (Fruits, Boissons…).
+
+Rôle : Organiser les produits pour faciliter la recherche et le classement.
+
+3️⃣ products – Produits
+
+Contient les produits vendus dans chaque magasin avec prix, quantité, description et image principale.
+
+Rôle : Gérer le stock et les informations de chaque produit.
+
+4️⃣ product_images – Images des produits
+
+Contient plusieurs images par produit.
+
+Rôle : Améliorer l’affichage des produits sur une interface web ou mobile.
+
+5️⃣ employees – Mini-admins / employés
+
+Contient les comptes des employés, leur rôle et le magasin associé.
+
+Rôle : Gérer les accès, les responsabilités et l’administration de chaque magasin.
+
+6️⃣ orders – Commandes
+
+Contient les commandes passées, le magasin et l’employé qui a enregistré la commande.
+
+Rôle : Suivre toutes les ventes et relier chaque commande à un magasin et un employé.
+
+7️⃣ order_items – Détails des commandes
+
+Contient les produits et quantités pour chaque commande.
+
+Rôle : Suivre précisément ce qui a été vendu dans chaque commande.
+
+8️⃣ discounts – Réductions / Promotions
+
+Contient les promotions appliquées à certains produits avec pourcentage et dates de validité.
+
+Rôle : Gérer les offres spéciales et calculer automatiquement les prix réduits.
+
+9️⃣ stock_logs – Historique du stock
+
+Contient l’historique des changements de stock (ajout, retrait, modification).
+
+Rôle : Suivre et contrôler les mouvements de stock pour éviter les erreurs ou pertes.
+
+🔟 customer_sessions – Sessions clients
+
+Contient les sessions des clients sur une interface web ou mobile.
+
+Rôle : Suivre l’activité des clients et gérer les paniers ou commandes en cours.

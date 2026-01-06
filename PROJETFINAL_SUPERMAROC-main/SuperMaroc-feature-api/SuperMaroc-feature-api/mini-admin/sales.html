@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Analytics - SuperMaroc</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Date Range Picker -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="sales.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-chart-line"></i> SuperMaroc - Sales Analytics
+            </a>
+            <div class="d-flex align-items-center">
+                <span class="text-light me-3">
+                    <i class="fas fa-map-marker-alt"></i> <strong id="currentStore">Agadir Store</strong>
+                </span>
+                <div id="dateRangePicker" class="me-3">
+                    <i class="fas fa-calendar-alt me-2"></i>
+                    <span id="dateRangeText">Today</span>
+                </div>
+                <button class="btn btn-yellow" id="exportReportBtn">
+                    <i class="fas fa-file-export"></i> Export
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-2 p-0 sidebar">
+                <div class="pt-3">
+                    <a href="index.html">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a>
+                    <a href="products.html">
+                        <i class="fas fa-boxes"></i> Products
+                    </a>
+                    <a href="#" class="active">
+                        <i class="fas fa-chart-line"></i> Sales
+                    </a>
+                    <a href="alerts.html">
+                        <i class="fas fa-exclamation-triangle"></i> Alerts
+                    </a>
+                    <a href="orders.html">
+                        <i class="fas fa-shopping-cart"></i> Orders
+                    </a>
+                    <a href="suppliers.html">
+                        <i class="fas fa-truck"></i> Suppliers
+                    </a>
+                    <a href="inventory.html">
+                        <i class="fas fa-clipboard-check"></i> Inventory
+                    </a>
+                    <hr class="my-3">
+                   
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-10 p-4">
+                <!-- Sales KPIs -->
+                <div class="row mb-4">
+                    <div class="col-md-3 col-sm-6">
+                        <div class="card stat-card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="card-title">TOTAL REVENUE</h6>
+                                        <h2 class="card-value" id="totalRevenue">8,450 MAD</h2>
+                                        <p class="card-change positive">
+                                            <i class="fas fa-arrow-up"></i> 12.5% from yesterday
+                                        </p>
+                                    </div>
+                                    <i class="fas fa-money-bill-wave fa-2x text-success"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="card stat-card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="card-title">TRANSACTIONS</h6>
+                                        <h2 class="card-value" id="totalTransactions">127</h2>
+                                        <p class="card-change positive">
+                                            <i class="fas fa-arrow-up"></i> 8.2% from yesterday
+                                        </p>
+                                    </div>
+                                    <i class="fas fa-shopping-cart fa-2x text-primary"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="card stat-card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="card-title">AVG. TICKET</h6>
+                                        <h2 class="card-value" id="avgTicket">66.54 MAD</h2>
+                                        <p class="card-change negative">
+                                            <i class="fas fa-arrow-down"></i> 2.1% from yesterday
+                                        </p>
+                                    </div>
+                                    <i class="fas fa-receipt fa-2x text-warning"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="card stat-card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="card-title">ITEMS/SALE</h6>
+                                        <h2 class="card-value" id="itemsPerSale">8.3</h2>
+                                        <p class="card-change positive">
+                                            <i class="fas fa-arrow-up"></i> 4.7% from yesterday
+                                        </p>
+                                    </div>
+                                    <i class="fas fa-box fa-2x text-info"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="row mb-4">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header card-header-yellow d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0"><i class="fas fa-chart-line"></i> Sales Trend</h5>
+                                <div class="btn-group btn-group-sm">
+                                    <button type="button" class="btn btn-yellow active" data-period="day">Day</button>
+                                    <button type="button" class="btn btn-yellow" data-period="week">Week</button>
+                                    <button type="button" class="btn btn-yellow" data-period="month">Month</button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="salesTrendChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header card-header-yellow">
+                                <h5 class="mb-0"><i class="fas fa-chart-pie"></i> Sales by Category</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="categoryChart"></canvas>
+                                </div>
+                                <div class="legend-container mt-3" id="categoryLegend">
+                                    <!-- Legend will be generated here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Top Products & Hourly Analysis -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header card-header-yellow">
+                                <h5 class="mb-0"><i class="fas fa-crown"></i> Top Selling Products</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Product</th>
+                                                <th>Units Sold</th>
+                                                <th>Revenue</th>
+                                                <th>Trend</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="topProductsBody">
+                                            <!-- Top products will be loaded here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header card-header-yellow">
+                                <h5 class="mb-0"><i class="fas fa-clock"></i> Hourly Sales Pattern</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="hourlyChart"></canvas>
+                                </div>
+                                <div class="text-center mt-3">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <div class="peak-indicator morning">
+                                                <i class="fas fa-sun"></i>
+                                                <div>Morning Peak</div>
+                                                <strong>10:00-12:00</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="peak-indicator afternoon">
+                                                <i class="fas fa-utensils"></i>
+                                                <div>Afternoon Dip</div>
+                                                <strong>14:00-16:00</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="peak-indicator evening">
+                                                <i class="fas fa-moon"></i>
+                                                <div>Evening Peak</div>
+                                                <strong>18:00-20:00</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detailed Analysis & Comparison -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header card-header-yellow">
+                                <h5 class="mb-0"><i class="fas fa-exchange-alt"></i> Daily Comparison</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="comparison-container">
+                                    <div class="comparison-row">
+                                        <div class="comparison-label">Today vs Yesterday</div>
+                                        <div class="comparison-bar">
+                                            <div class="bar today" style="width: 65%">
+                                                <span>Today: 8,450 MAD</span>
+                                            </div>
+                                            <div class="bar yesterday" style="width: 50%">
+                                                <span>Yesterday: 7,500 MAD</span>
+                                            </div>
+                                        </div>
+                                        <div class="comparison-change positive">+12.5%</div>
+                                    </div>
+                                    <div class="comparison-row">
+                                        <div class="comparison-label">This Week vs Last Week</div>
+                                        <div class="comparison-bar">
+                                            <div class="bar today" style="width: 70%">
+                                                <span>This Week: 58,900 MAD</span>
+                                            </div>
+                                            <div class="bar yesterday" style="width: 60%">
+                                                <span>Last Week: 50,400 MAD</span>
+                                            </div>
+                                        </div>
+                                        <div class="comparison-change positive">+16.8%</div>
+                                    </div>
+                                    <div class="comparison-row">
+                                        <div class="comparison-label">This Month vs Last Month</div>
+                                        <div class="comparison-bar">
+                                            <div class="bar today" style="width: 80%">
+                                                <span>This Month: 245,000 MAD</span>
+                                            </div>
+                                            <div class="bar yesterday" style="width: 72%">
+                                                <span>Last Month: 220,500 MAD</span>
+                                            </div>
+                                        </div>
+                                        <div class="comparison-change positive">+11.1%</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header card-header-yellow">
+                                <h5 class="mb-0"><i class="fas fa-store"></i> Store Comparison</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart-container">
+                                    <canvas id="storeComparisonChart"></canvas>
+                                </div>
+                                <div class="store-stats mt-3">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="store-stat">
+                                                <div class="store-name">Agadir</div>
+                                                <div class="store-revenue">58,900 MAD</div>
+                                                <div class="store-change positive">+12.5%</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="store-stat">
+                                                <div class="store-name">Casablanca</div>
+                                                <div class="store-revenue">89,200 MAD</div>
+                                                <div class="store-change positive">+18.2%</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Transactions Table -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header card-header-yellow d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0"><i class="fas fa-list"></i> Recent Transactions</h5>
+                                <div class="btn-group">
+                                    <button class="btn btn-yellow btn-sm" id="refreshTransactionsBtn">
+                                        <i class="fas fa-sync-alt"></i> Refresh
+                                    </button>
+                                    <button class="btn btn-yellow btn-sm" id="filterTransactionsBtn">
+                                        <i class="fas fa-filter"></i> Filter
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="row mb-3">
+                                    <div class="col-md-3">
+                                        <input type="text" class="form-control" id="transactionSearch" placeholder="Search transactions...">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select class="form-select" id="paymentFilter">
+                                            <option value="">All Payment Methods</option>
+                                            <option value="cash">Cash</option>
+                                            <option value="card">Card</option>
+                                            <option value="mobile">Mobile Payment</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select class="form-select" id="amountFilter">
+                                            <option value="">All Amounts</option>
+                                            <option value="low">Under 50 MAD</option>
+                                            <option value="medium">50-200 MAD</option>
+                                            <option value="high">Over 200 MAD</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <button class="btn btn-yellow w-100" id="clearTransactionFiltersBtn">
+                                            <i class="fas fa-times"></i> Clear Filters
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="table-responsive">
+                                    <table class="table table-hover" id="transactionsTable">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Time</th>
+                                                <th>Customer</th>
+                                                <th>Items</th>
+                                                <th>Amount</th>
+                                                <th>Payment</th>
+                                                <th>Cashier</th>
+                                                <th>Status</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="transactionsTableBody">
+                                            <!-- Transactions will be loaded here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <div>
+                                        <span class="text-muted" id="transactionCountText">Showing 0 transactions</span>
+                                    </div>
+                                    <nav>
+                                        <ul class="pagination mb-0">
+                                            <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+                                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                            <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                                        </ul>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transaction Details Modal -->
+    <div class="modal fade" id="transactionModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header modal-header-yellow">
+                    <h5 class="modal-title"><i class="fas fa-receipt"></i> Transaction Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="transactionDetails">
+                        <!-- Transaction details will be loaded here -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-yellow" id="printReceiptBtn">
+                        <i class="fas fa-print"></i> Print Receipt
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Export Modal -->
+    <div class="modal fade" id="exportModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header modal-header-yellow">
+                    <h5 class="modal-title"><i class="fas fa-file-export"></i> Export Sales Report</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Format</label>
+                        <select class="form-select" id="exportFormat">
+                            <option value="pdf">PDF Document</option>
+                            <option value="excel">Excel Spreadsheet</option>
+                            <option value="csv">CSV File</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Date Range</label>
+                        <select class="form-select" id="exportDateRange">
+                            <option value="today">Today</option>
+                            <option value="week">This Week</option>
+                            <option value="month">This Month</option>
+                            <option value="custom">Custom Range</option>
+                        </select>
+                    </div>
+                    <div class="mb-3" id="customDateRange" style="display: none;">
+                        <label class="form-label">Custom Range</label>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <input type="date" class="form-control" id="exportStartDate">
+                            </div>
+                            <div class="col-md-6">
+                                <input type="date" class="form-control" id="exportEndDate">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Include</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="includeCharts" checked>
+                            <label class="form-check-label" for="includeCharts">Charts & Graphs</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="includeTransactions" checked>
+                            <label class="form-check-label" for="includeTransactions">Transaction Details</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="includeSummary" checked>
+                            <label class="form-check-label" for="includeSummary">Executive Summary</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-yellow" id="confirmExportBtn">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <!-- Date Range Picker -->
+    <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script src="sales.js"></script>
+</body>
+</html>
