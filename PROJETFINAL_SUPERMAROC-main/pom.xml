@@ -11,6 +11,6 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>SuperMaroc-main/SuperMaroc-main</module>
+    	<module>backend</module>
     </modules>
 </project>
