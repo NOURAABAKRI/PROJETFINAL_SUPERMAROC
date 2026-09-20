@@ -1,977 +1,1092 @@
-// Products Management JavaScript
+const API_URL = "http://localhost:8888/api/admin/produits";
+const LOW_STOCK_LIMIT = 10;
+
+const STORES = {
+    1: "SuperMaroc Agadir",
+    2: "SuperMaroc Casablanca"
+};
+
+const CATEGORIES = {
+    1: "Fruits",
+    2: "Boissons",
+    3: "Produits laitiers",
+    4: "Épicerie"
+};
+
 class ProductsManager {
     constructor() {
         this.products = [];
-        this.selectedProducts = new Set();
-        this.currentCategoryFilter = 'all';
-        this.currentStatusFilter = '';
-        this.currentSearchTerm = '';
-        
-        this.init();
+        this.currentSearchTerm = "";
+        this.currentCategoryFilter = "";
+        this.currentStatusFilter = "";
+        this.editingProductId = null;
     }
 
-    init() {
-        this.loadProducts();
-        this.renderProducts();
+    async init() {
         this.setupEventListeners();
-        this.updateStatistics();
+        this.populateCategories();
+        await this.loadProducts();
     }
-async loadProducts() {
-  try {
-    const res = await fetch("http://localhost:8888/api/admin/produits", {
-      method: "GET",
-      headers: { "Content-Type": "application/json" }
-    });
-
-    if (!res.ok) {
-      throw new Error(`Erreur API: ${res.status}`);
-    }
-
-    const rawProducts = await res.json();
-
-    this.products = rawProducts.map(p => ({
-  id: p.productId,
-  nom: p.name,
-  description: p.description,
-  prix: Number(p.price) || 0,
-  stock: Number(p.quantity) || 0,
-  magasin: p.storeId,
-  imagePath: p.imagePath
-}));
-
-    console.log("Produit exemple :", this.products[0]);
-
-    this.renderProducts();
-    this.updateStatistics();
-    this.showNotification("Produits chargés avec succès", "success");
-  } catch (err) {
-    this.showNotification("Erreur lors du chargement des produits", "error");
-    console.error("loadProducts() error:", err);
-  }
-}
 
     setupEventListeners() {
-
-        document.getElementById("saveProductBtn")?.addEventListener("click", () => {
-  if (typeof productsManager !== "undefined" && productsManager.saveProduct) {
-    productsManager.saveProduct();
-  } else {
-    console.error("productsManager.saveProduct is not available");
-  }
-});
-        // Search input
-        document.getElementById('productSearch').addEventListener('input', (e) => {
-            this.currentSearchTerm = e.target.value.toLowerCase();
+        document.getElementById("productSearch")?.addEventListener("input", (e) => {
+            this.currentSearchTerm = e.target.value.trim().toLowerCase();
             this.renderProducts();
         });
 
-        // Status filter
-        document.getElementById('statusFilter').addEventListener('change', (e) => {
+        document.getElementById("statusFilter")?.addEventListener("change", (e) => {
             this.currentStatusFilter = e.target.value;
             this.renderProducts();
         });
 
-        // Category filter
-        document.getElementById('categoryFilter').addEventListener('change', (e) => {
+        document.getElementById("categoryFilter")?.addEventListener("change", (e) => {
             this.currentCategoryFilter = e.target.value;
             this.renderProducts();
             this.updateCategoryBadges();
         });
 
-        // Clear filters
-        document.getElementById('clearFiltersBtn').addEventListener('click', () => {
+        document.getElementById("clearFiltersBtn")?.addEventListener("click", () => {
             this.clearFilters();
         });
 
-        // Add product button
-        document.getElementById('addProductBtn').addEventListener('click', () => {
+        document.getElementById("addProductBtn")?.addEventListener("click", () => {
             this.openAddProductModal();
         });
 
-        // Save product button
         document.getElementById("saveProductBtn")?.addEventListener("click", () => {
-            this.saveProduct(); // ✅ correct inside the class
-         });
-
-        // Generate barcode
-        document.getElementById('generateBarcodeBtn').addEventListener('click', () => {
-            this.generateBarcode();
+            this.saveProduct();
         });
 
-        // Refresh products
-        document.getElementById('refreshProductsBtn').addEventListener('click', () => {
-            this.refreshProducts();
+        document.getElementById("refreshProductsBtn")?.addEventListener("click", () => {
+            this.loadProducts();
         });
 
-        // Delete selected
-        document.getElementById('deleteSelectedBtn').addEventListener('click', () => {
-            this.deleteSelectedProducts();
+        document.getElementById("syncButton")?.addEventListener("click", () => {
+            this.loadProducts();
         });
 
-        // Sync button
-        document.getElementById('syncButton').addEventListener('click', () => {
-            this.syncWithHQ();
-        });
-
-        // Quick actions
-        document.getElementById('scanBarcodeBtn').addEventListener('click', () => {
-            this.showNotification('Barcode scanner coming soon!', 'info');
-        });
-
-        document.getElementById('exportCSVBtn').addEventListener('click', () => {
+        document.getElementById("exportCSVBtn")?.addEventListener("click", () => {
             this.exportToCSV();
         });
 
-        document.getElementById('printTagsBtn').addEventListener('click', () => {
-            this.printPriceTags();
-        });
-
-        document.getElementById('lowStockBtn').addEventListener('click', () => {
-            this.filterLowStock();
-        });
-
-        document.getElementById('expiringBtn').addEventListener('click', () => {
-            this.filterExpiringSoon();
-        });
-
-        // Export buttons
-        document.getElementById('exportPDFBtn').addEventListener('click', () => {
-            this.showNotification('PDF export coming soon!', 'info');
-        });
-
-        document.getElementById('exportExcelBtn').addEventListener('click', () => {
-            this.showNotification('Excel export coming soon!', 'info');
-        });
-
-        document.getElementById('exportCSVBtn2').addEventListener('click', () => {
+        document.getElementById("exportCSVBtn2")?.addEventListener("click", () => {
             this.exportToCSV();
         });
 
-        // Calculate margin
-        document.getElementById('costPrice')?.addEventListener('input', () => this.calculateMargin());
-        document.getElementById('sellingPrice')?.addEventListener('input', () => this.calculateMargin());
+        document.getElementById("lowStockBtn")?.addEventListener("click", () => {
+            this.currentStatusFilter = "low-stock";
+
+            const statusFilter = document.getElementById("statusFilter");
+            if (statusFilter) statusFilter.value = "low-stock";
+
+            this.renderProducts();
+        });
+
+        document.getElementById("scanBarcodeBtn")?.addEventListener("click", () => {
+            this.showNotification(
+                "Barcode scanner is not connected to the backend.",
+                "info"
+            );
+        });
+
+        document.getElementById("printTagsBtn")?.addEventListener("click", () => {
+            window.print();
+        });
+
+        document.getElementById("expiringBtn")?.addEventListener("click", () => {
+            this.showNotification(
+                "Expiry dates are not stored in the current database schema.",
+                "info"
+            );
+        });
+
+        document.getElementById("exportPDFBtn")?.addEventListener("click", (e) => {
+            e.preventDefault();
+            window.print();
+        });
+
+        document.getElementById("exportExcelBtn")?.addEventListener("click", (e) => {
+            e.preventDefault();
+            this.exportToCSV();
+        });
+
+        document.getElementById("deleteSelectedBtn")?.addEventListener("click", () => {
+            this.showNotification(
+                "Select-and-delete is not enabled. Use the delete button of a product.",
+                "info"
+            );
+        });
+
+        document
+            .getElementById("addProductModal")
+            ?.addEventListener("hidden.bs.modal", () => {
+                this.resetProductForm();
+            });
     }
 
-  setupStoreFilters() {
-    const container = document.getElementById('store-filters');
-    if (!container) return;
+    async loadProducts() {
+        try {
+            this.setSyncState(true);
 
-    // Récupérer les magasins uniques
-    const stores = ['all', ...new Set(this.products.map(p => p.magasin))];
+            const response = await fetch(API_URL);
 
-    container.innerHTML = '';
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
 
-    stores.forEach(store => {
-        const badge = document.createElement('span');
-        badge.className = `store-badge ${store === this.currentStoreFilter ? 'active' : ''}`;
-        badge.dataset.store = store;
-        badge.innerHTML = `
-            <i class="fas fa-store"></i>
-            ${store || 'Inconnu'}
-        `;
-        badge.addEventListener('click', () => {
-            this.filterByStore(store);
+            const data = await response.json();
+
+            this.products = data.map((product) => ({
+                productId: Number(product.productId),
+                storeId: Number(product.storeId),
+                categoryId: Number(product.categoryId),
+                name: product.name || "",
+                price: Number(product.price) || 0,
+                quantity: Number(product.quantity) || 0,
+                description: product.description || "",
+                imagePath: product.imagePath || ""
+            }));
+
+            this.renderProducts();
+            this.renderCategoryBadges();
+            this.updateStatistics();
+
+            this.showNotification(
+                `${this.products.length} products loaded`,
+                "success"
+            );
+        } catch (error) {
+            console.error("loadProducts error:", error);
+
+            this.showNotification(
+                "Unable to load products from the API.",
+                "error"
+            );
+        } finally {
+            this.setSyncState(false);
+        }
+    }
+
+    populateCategories() {
+        const categoryFilter = document.getElementById("categoryFilter");
+
+        if (categoryFilter) {
+            categoryFilter.innerHTML = `
+                <option value="">All Categories</option>
+                <option value="1">Fruits</option>
+                <option value="2">Boissons</option>
+                <option value="3">Produits laitiers</option>
+                <option value="4">Épicerie</option>
+            `;
+        }
+    }
+
+    renderCategoryBadges() {
+        const container = document.getElementById("category-filters");
+        if (!container) return;
+
+        const counts = {};
+
+        Object.keys(CATEGORIES).forEach((id) => {
+            counts[id] = this.products.filter(
+                (product) => product.categoryId === Number(id)
+            ).length;
         });
-        container.appendChild(badge);
-    });
-}
+
+        container.innerHTML = `
+            <button
+                type="button"
+                class="btn btn-sm category-badge ${
+                    this.currentCategoryFilter === "" ? "btn-dark" : "btn-outline-dark"
+                } me-2 mb-2"
+                data-category=""
+            >
+                All (${this.products.length})
+            </button>
+
+            ${Object.entries(CATEGORIES)
+                .map(([id, name]) => `
+                    <button
+                        type="button"
+                        class="btn btn-sm category-badge ${
+                            this.currentCategoryFilter === id
+                                ? "btn-dark"
+                                : "btn-outline-dark"
+                        } me-2 mb-2"
+                        data-category="${id}"
+                    >
+                        ${this.escapeHtml(name)} (${counts[id] || 0})
+                    </button>
+                `)
+                .join("")}
+        `;
+
+        container.querySelectorAll(".category-badge").forEach((button) => {
+            button.addEventListener("click", () => {
+                this.currentCategoryFilter = button.dataset.category;
+
+                const categoryFilter = document.getElementById("categoryFilter");
+                if (categoryFilter) {
+                    categoryFilter.value = this.currentCategoryFilter;
+                }
+
+                this.renderProducts();
+                this.renderCategoryBadges();
+            });
+        });
+    }
 
     updateCategoryBadges() {
-        document.querySelectorAll('.category-badge').forEach(badge => {
-            const category = badge.dataset.category;
-            badge.classList.toggle('active', category === this.currentCategoryFilter);
-        });
+        this.renderCategoryBadges();
     }
 
-    populateCategorySelect() {
-        const select = document.getElementById('categoryFilter');
-        if (!select) return;
+    getFilteredProducts() {
+        return this.products.filter((product) => {
+            const searchText = [
+                product.name,
+                product.description,
+                STORES[product.storeId] || "",
+                CATEGORIES[product.categoryId] || ""
+            ]
+                .join(" ")
+                .toLowerCase();
 
-        // Get unique categories
-        const categories = [...new Set(this.products.map(p => p.category))].sort();
-        
-        // Clear existing options (keep "All Categories")
-        select.innerHTML = '<option value="">All Categories</option>';
-        
-        categories.forEach(category => {
-            const option = document.createElement('option');
-            option.value = category;
-            option.textContent = this.getCategoryDisplayName(category);
-            select.appendChild(option);
+            const matchesSearch =
+                !this.currentSearchTerm ||
+                searchText.includes(this.currentSearchTerm);
+
+            const matchesCategory =
+                !this.currentCategoryFilter ||
+                product.categoryId === Number(this.currentCategoryFilter);
+
+            const status = this.getStockStatus(product.quantity);
+
+            const matchesStatus =
+                !this.currentStatusFilter ||
+                status === this.currentStatusFilter;
+
+            return matchesSearch && matchesCategory && matchesStatus;
         });
-    }
-
-    filterByCategory(category) {
-        this.currentCategoryFilter = category;
-        document.getElementById('categoryFilter').value = category;
-        this.renderProducts();
-        this.updateCategoryBadges();
     }
 
     renderProducts() {
-        const tableBody = document.getElementById('productsTableBody');
+        const tableBody = document.getElementById("productsTableBody");
         if (!tableBody) return;
 
-        // Filter products
-        let filteredProducts = this.products;
-        
-        // Apply search filter
-        if (this.currentSearchTerm) {
-        filteredProducts = filteredProducts.filter(p =>
-            (p.nom && p.nom.toLowerCase().includes(this.currentSearchTerm)) ||
-            (p.description && p.description.toLowerCase().includes(this.currentSearchTerm)) ||
-            (p.magasin && p.magasin.toLowerCase().includes(this.currentSearchTerm))
-        );
-        }
-
-        // Clear table
-        tableBody.innerHTML = '';
+        const filteredProducts = this.getFilteredProducts();
 
         if (filteredProducts.length === 0) {
             tableBody.innerHTML = `
                 <tr>
-                    <td colspan="8" class="text-center py-5">
+                    <td colspan="7" class="text-center py-5">
                         <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
                         <h5 class="text-muted">No products found</h5>
-                        <p class="text-muted">Try changing your filters or add a new product</p>
                     </td>
                 </tr>
             `;
-        } else {
-            // Render products
-            filteredProducts.forEach(product => {
-                const row = this.createProductRow(product);
-                tableBody.appendChild(row);
-            });
+
+            this.updateProductCount(0);
+            return;
         }
 
-        // Update product count
+        tableBody.innerHTML = filteredProducts
+            .map((product) => this.createProductRow(product))
+            .join("");
+
         this.updateProductCount(filteredProducts.length);
     }
 
-createProductRow(product) {
-  const row = document.createElement('tr');
-  row.dataset.id = product.id;
+    createProductRow(product) {
+        const image = this.getProductImage(product);
+        const status = this.getStockStatus(product.quantity);
+        const statusLabel = this.getStatusText(status);
 
-  const prix = Number(product.prix ?? 0);
-  const stock = Number(product.stock ?? 0);
-  const nom = product.nom ?? '';
-  const description = product.description ?? '';
-  const magasin = product.magasin;
-  const imagePath = product.imagePath;
+        return `
+            <tr>
+                <td class="text-center">
+                    ${product.productId}
+                </td>
 
-  row.innerHTML = `
-    <td class="text-center">${product.id ?? ''}</td>
-    <td>
-      <div class="product-info">
-        <div class="product-name">${nom || '<span class="text-muted">Sans nom</span>'}</div>
-        ${description ? `<div class="product-details small">${description}</div>` : ''}
-      </div>
-    </td>
-    <td class="text-center">${Number.isFinite(stock) ? stock : 0}</td>
-    <td class="text-end"><strong class="text-success">${Number.isFinite(prix) ? prix.toFixed(2) : '0.00'} MAD</strong></td>
-    <td class="text-center">Magasin #${Number.isFinite(magasin) ? magasin : 'N/A'}</td>
-    <td class="text-center">
-      ${imagePath && imagePath.includes('.jpg') 
-        ? `<img src="${imagePath}" alt="${nom}" style="width:50px;height:50px;object-fit:cover;">` 
-        : '<span class="text-muted">—</span>'}
-    </td>
-    <td class="text-center">
-      <div class="action-buttons">
-        <button class="btn btn-action btn-action-edit" onclick="productsManager.editProduct(${product.id})" title="Modifier"><i class="fas fa-edit"></i></button>
-        <button class="btn btn-action btn-action-view" onclick="productsManager.viewProduct(${product.id})" title="Voir"><i class="fas fa-eye"></i></button>
-        <button class="btn btn-action btn-action-delete" onclick="productsManager.deleteProduct(${product.id})" title="Supprimer"><i class="fas fa-trash"></i></button>
-      </div>
-    </td>
-  `;
-  return row;
-}
- updateProductCount(count) {
-        const totalCount = this.products.length;
-        const element = document.getElementById('productCountText');
+                <td>
+                    <div class="d-flex align-items-center">
+                        <img
+                            src="${this.escapeAttribute(image)}"
+                            alt="${this.escapeAttribute(product.name)}"
+                            width="55"
+                            height="55"
+                            style="
+                                object-fit: cover;
+                                border-radius: 8px;
+                                margin-right: 12px;
+                                background: #f5f5f5;
+                            "
+                            onerror="
+                                this.onerror=null;
+                                this.src='https://cdn-icons-png.flaticon.com/512/679/679720.png';
+                            "
+                        >
+
+                        <div>
+                            <div class="fw-bold">
+                                ${this.escapeHtml(product.name)}
+                            </div>
+
+                            <div class="small text-muted">
+                                ${this.escapeHtml(
+                                    CATEGORIES[product.categoryId] || "Unknown category"
+                                )}
+                            </div>
+
+                            ${
+                                product.description
+                                    ? `<div class="small text-muted">
+                                        ${this.escapeHtml(
+                                            this.shortenText(product.description, 60)
+                                        )}
+                                       </div>`
+                                    : ""
+                            }
+                        </div>
+                    </div>
+                </td>
+
+                <td class="text-center">
+                    <span class="badge ${this.getStatusBootstrapClass(status)}">
+                        ${product.quantity}
+                    </span>
+                    <div class="small text-muted mt-1">
+                        ${statusLabel}
+                    </div>
+                </td>
+
+                <td class="text-end">
+                    <strong class="text-success">
+                        ${product.price.toFixed(2)} MAD
+                    </strong>
+                </td>
+
+                <td class="text-center">
+                    ${this.escapeHtml(
+                        STORES[product.storeId] || `Store #${product.storeId}`
+                    )}
+                </td>
+
+                <td class="text-center">
+                    <img
+                        src="${this.escapeAttribute(image)}"
+                        alt="${this.escapeAttribute(product.name)}"
+                        width="55"
+                        height="55"
+                        style="
+                            object-fit: cover;
+                            border-radius: 8px;
+                            background: #f5f5f5;
+                        "
+                        onerror="
+                            this.onerror=null;
+                            this.src='https://cdn-icons-png.flaticon.com/512/679/679720.png';
+                        "
+                    >
+                </td>
+
+                <td class="text-center">
+                    <div class="action-buttons">
+                        <button
+                            type="button"
+                            class="btn btn-sm btn-warning me-1"
+                            onclick="productsManager.editProduct(${product.productId})"
+                            title="Edit"
+                        >
+                            <i class="fas fa-edit"></i>
+                        </button>
+
+                        <button
+                            type="button"
+                            class="btn btn-sm btn-info me-1"
+                            onclick="productsManager.viewProduct(${product.productId})"
+                            title="View"
+                        >
+                            <i class="fas fa-eye"></i>
+                        </button>
+
+                        <button
+                            type="button"
+                            class="btn btn-sm btn-danger"
+                            onclick="productsManager.deleteProduct(${product.productId})"
+                            title="Delete"
+                        >
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }
+
+    getProductImage(product) {
+        const imagePath = (product.imagePath || "").trim();
+
+        if (!imagePath) {
+            return "https://cdn-icons-png.flaticon.com/512/679/679720.png";
+        }
+
+        if (
+            imagePath.startsWith("http://") ||
+            imagePath.startsWith("https://") ||
+            imagePath.startsWith("data:")
+        ) {
+            return imagePath;
+        }
+
+        if (imagePath.startsWith("/")) {
+            return `http://localhost:8888${imagePath}`;
+        }
+
+        return `http://localhost:8888/${imagePath}`;
+    }
+
+    getStockStatus(quantity) {
+        if (quantity <= 0) {
+            return "out-of-stock";
+        }
+
+        if (quantity <= LOW_STOCK_LIMIT) {
+            return "low-stock";
+        }
+
+        return "in-stock";
+    }
+
+    getStatusText(status) {
+        const labels = {
+            "in-stock": "In Stock",
+            "low-stock": "Low Stock",
+            "out-of-stock": "Out of Stock"
+        };
+
+        return labels[status] || "Unknown";
+    }
+
+    getStatusBootstrapClass(status) {
+        const classes = {
+            "in-stock": "bg-success",
+            "low-stock": "bg-warning text-dark",
+            "out-of-stock": "bg-danger"
+        };
+
+        return classes[status] || "bg-secondary";
+    }
+
+    updateProductCount(count) {
+        const element = document.getElementById("productCountText");
+
         if (element) {
-            element.textContent = `Showing ${count} of ${totalCount} products`;
+            element.textContent =
+                `Showing ${count} of ${this.products.length} products`;
         }
     }
 
     updateStatistics() {
         const totalProducts = this.products.length;
-        const lowStockCount = this.products.filter(p => p.status === 'low-stock').length;
-        const outOfStockCount = this.products.filter(p => p.status === 'out-of-stock').length;
-        const totalStockValue = this.products.reduce((sum, p) => sum + (p.stock * p.costPrice), 0);
-        const avgPrice = this.products.length > 0 ? 
-            this.products.reduce((sum, p) => sum + p.sellingPrice, 0) / this.products.length : 0;
-        
-        // Calculate expiring products (within 7 days)
-        const today = new Date();
-        const expiringCount = this.products.filter(p => {
-            if (!p.expiryDate) return false;
-            const expiryDate = new Date(p.expiryDate);
-            const diffTime = expiryDate - today;
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            return diffDays <= 7 && diffDays >= 0;
-        }).length;
 
-        // Update UI
-        this.updateStatistic('totalProducts', totalProducts);
-        this.updateStatistic('lowStockCount', lowStockCount);
-        this.updateStatistic('outOfStockCount', outOfStockCount);
-        this.updateStatistic('totalStockValue', totalStockValue.toFixed(2) + ' MAD');
-        this.updateStatistic('avgPrice', avgPrice.toFixed(2));
-        this.updateStatistic('expiringCount', expiringCount);
-        
-        // Weekly change (simulated)
-        const weeklyChange = Math.floor(Math.random() * 10) + 1;
-        this.updateStatistic('weeklyChange', weeklyChange);
+        const lowStock = this.products.filter(
+            (product) =>
+                product.quantity > 0 &&
+                product.quantity <= LOW_STOCK_LIMIT
+        ).length;
+
+        const outOfStock = this.products.filter(
+            (product) => product.quantity <= 0
+        ).length;
+
+        const totalStockValue = this.products.reduce(
+            (total, product) =>
+                total + product.price * product.quantity,
+            0
+        );
+
+        const averagePrice =
+            totalProducts > 0
+                ? this.products.reduce(
+                    (total, product) => total + product.price,
+                    0
+                ) / totalProducts
+                : 0;
+
+        this.setText("totalProducts", totalProducts);
+        this.setText("lowStockCount", lowStock);
+        this.setText("outOfStockCount", outOfStock);
+        this.setText(
+            "totalStockValue",
+            `${totalStockValue.toFixed(2)} MAD`
+        );
+        this.setText("avgPrice", averagePrice.toFixed(2));
+
+        // Not present in the current DB schema.
+        this.setText("expiringCount", "N/A");
+        this.setText("weeklyChange", "Live data");
     }
 
-    updateStatistic(id, value) {
-        const element = document.getElementById(id);
-        if (element) {
-            element.textContent = value;
-        }
+    openAddProductModal() {
+        this.resetProductForm();
+
+        document.getElementById("modalTitle").innerHTML =
+            '<i class="fas fa-plus-circle"></i> Add New Product';
+
+        const modalElement = document.getElementById("addProductModal");
+        bootstrap.Modal.getOrCreateInstance(modalElement).show();
     }
 
-    // Filter Methods
-    clearFilters() {
-        this.currentCategoryFilter = 'all';
-        this.currentStatusFilter = '';
-        this.currentSearchTerm = '';
-        
-        document.getElementById('categoryFilter').value = '';
-        document.getElementById('statusFilter').value = '';
-        document.getElementById('productSearch').value = '';
-        
-        this.renderProducts();
-        this.updateCategoryBadges();
-        this.showNotification('All filters cleared', 'info');
-    }
+    async saveProduct() {
+        const name = document.getElementById("productName")?.value.trim();
+        const categoryId = Number(
+            document.getElementById("categoryId")?.value
+        );
+        const storeId = Number(
+            document.getElementById("storeId")?.value
+        );
+        const imagePath =
+            document.getElementById("imagePath")?.value.trim() || "";
+        const price = Number(
+            document.getElementById("sellingPrice")?.value
+        );
+        const quantity = Number(
+            document.getElementById("currentStock")?.value
+        );
+        const description =
+            document.getElementById("description")?.value.trim() || "";
 
-    filterLowStock() {
-        this.currentStatusFilter = 'low-stock';
-        document.getElementById('statusFilter').value = 'low-stock';
-        this.renderProducts();
-        this.showNotification('Showing low stock products', 'warning');
-    }
-
-    filterExpiringSoon() {
-        // This is a special filter that doesn't use the normal filtering system
-        const today = new Date();
-        const filteredProducts = this.products.filter(p => {
-            if (!p.expiryDate) return false;
-            const expiryDate = new Date(p.expiryDate);
-            const diffTime = expiryDate - today;
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            return diffDays <= 7 && diffDays >= 0;
-        });
-        
-        if (filteredProducts.length === 0) {
-            this.showNotification('No products expiring soon', 'info');
+        if (
+            !name ||
+            !storeId ||
+            !categoryId ||
+            !Number.isFinite(price) ||
+            price < 0 ||
+            !Number.isInteger(quantity) ||
+            quantity < 0
+        ) {
+            this.showNotification(
+                "Please fill in the required fields correctly.",
+                "error"
+            );
             return;
         }
-        
-        // Update table with filtered products
-        const tableBody = document.getElementById('productsTableBody');
-        tableBody.innerHTML = '';
-        
-        filteredProducts.forEach(product => {
-            const row = this.createProductRow(product);
-            tableBody.appendChild(row);
-        });
-        
-        this.updateProductCount(filteredProducts.length);
-        this.showNotification(`Showing ${filteredProducts.length} products expiring soon`, 'warning');
-    }
 
-    // Product CRUD Operations
-    openAddProductModal() {
-        const modal = new bootstrap.Modal(document.getElementById('addProductModal'));
-        modal.show();
-    }
+        const productData = {
+            storeId,
+            categoryId,
+            name,
+            price,
+            quantity,
+            description,
+            imagePath
+        };
 
-saveProduct() {
-  const productData = {
-    productId: null,
-    storeId: parseInt(document.getElementById("storeId").value, 10),
-    categoryId: parseInt(document.getElementById("categoryId").value, 10),
-    name: document.getElementById("productName").value.trim(),
-    price: parseFloat(document.getElementById("sellingPrice").value),
-    quantity: parseInt(document.getElementById("currentStock").value, 10),
-    description: document.getElementById("description").value.trim(),
-    imagePath: document.getElementById("imagePath").value.trim()
-  };
+        if (this.editingProductId !== null) {
+            productData.productId = this.editingProductId;
+        }
 
-  if (!productData.name || !productData.storeId || !productData.categoryId ||
-      isNaN(productData.price) || isNaN(productData.quantity)) {
-    this.showNotification("Please fill in all required fields", "error");
-    return;
-  }
+        const isEditing = this.editingProductId !== null;
 
-  this.addProduct(productData);
+        try {
+            const response = await fetch(API_URL, {
+                method: isEditing ? "PUT" : "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(productData)
+            });
 
-  const modal = document.getElementById("addProductModal");
-  bootstrap.Modal.getInstance(modal).hide();
-  this.resetProductForm();
-}
-async addProduct(productData) {
-  try {
-    const res = await fetch("http://localhost:8888/api/admin/produits", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(productData)
-    });
+            if (!response.ok) {
+                const responseText = await response.text();
+                throw new Error(
+                    `HTTP ${response.status}: ${responseText}`
+                );
+            }
 
-    if (!res.ok) throw new Error(`API error ${res.status}`);
+            const modalElement =
+                document.getElementById("addProductModal");
 
-    const text = await res.text();
-    const created = text ? JSON.parse(text) : productData; // fallback
+            bootstrap.Modal
+                .getOrCreateInstance(modalElement)
+                .hide();
 
-    const uiProduct = {
-      id: created.productId || productData.productId,
-      nom: created.name || productData.name,
-      description: created.description || productData.description,
-      prix: created.price || productData.price,
-      stock: created.quantity || productData.quantity,
-      magasin: created.storeId || productData.storeId,
-      imagePath: created.imagePath || productData.imagePath
-    };
+            this.showNotification(
+                isEditing
+                    ? "Product updated successfully!"
+                    : "Product added successfully!",
+                "success"
+            );
 
-    this.products.push(uiProduct);
-    this.renderProducts();
-    this.updateStatistics();
-    this.showNotification("Produit ajouté avec succès !", "success");
-  } catch (err) {
-    console.error("addProduct() error:", err);
-    this.showNotification("Erreur lors de l'ajout du produit", "error");
-  }
-}
+            this.resetProductForm();
+            await this.loadProducts();
+        } catch (error) {
+            console.error("saveProduct error:", error);
 
-    updateProduct(productId, productData) {
-        const index = this.products.findIndex(p => p.id === parseInt(productId));
-        if (index === -1) return;
-
-        // Update product
-        productData.id = parseInt(productId);
-        productData.status = this.calculateStockStatus(productData.stock, productData.threshold);
-        productData.taxRate = this.products[index].taxRate; // Keep existing tax rate
-
-        this.products[index] = { ...this.products[index], ...productData };
-        
-        // Refresh display
-        this.renderProducts();
-        this.updateStatistics();
-        
-        this.showNotification('Product updated successfully!', 'success');
+            this.showNotification(
+                isEditing
+                    ? "Unable to update product."
+                    : "Unable to add product.",
+                "error"
+            );
+        }
     }
 
     editProduct(productId) {
-        const product = this.products.find(p => p.id === parseInt(productId));
+        const product = this.products.find(
+            (item) => item.productId === Number(productId)
+        );
+
         if (!product) {
-            this.showNotification('Product not found', 'error');
+            this.showNotification("Product not found.", "error");
             return;
         }
 
-        // Fill form
-        document.getElementById('productName').value = product.name;
-        document.getElementById('category').value = product.category;
-        document.getElementById('barcode').value = product.barcode;
-        document.getElementById('brand').value = product.brand || '';
-        document.getElementById('currentStock').value = product.stock;
-        document.getElementById('alertThreshold').value = product.threshold;
-        document.getElementById('costPrice').value = product.costPrice;
-        document.getElementById('sellingPrice').value = product.sellingPrice;
-        document.getElementById('expiryDate').value = product.expiryDate || '';
-        document.getElementById('location').value = product.location || '';
-        document.getElementById('unit').value = product.unit || 'piece';
+        this.editingProductId = product.productId;
 
-        // Calculate margin
-        this.calculateMargin();
+        document.getElementById("productName").value =
+            product.name;
 
-        // Set modal title and store product ID
-        document.getElementById('modalTitle').innerHTML = '<i class="fas fa-edit"></i> Edit Product';
-        document.getElementById('addProductModal').dataset.productId = productId;
+        document.getElementById("categoryId").value =
+            String(product.categoryId);
 
-        // Show modal
-        const modal = new bootstrap.Modal(document.getElementById('addProductModal'));
-        modal.show();
+        document.getElementById("storeId").value =
+            String(product.storeId);
+
+        document.getElementById("imagePath").value =
+            product.imagePath;
+
+        document.getElementById("sellingPrice").value =
+            product.price;
+
+        document.getElementById("currentStock").value =
+            product.quantity;
+
+        document.getElementById("description").value =
+            product.description;
+
+        document.getElementById("modalTitle").innerHTML =
+            '<i class="fas fa-edit"></i> Edit Product';
+
+        const modalElement =
+            document.getElementById("addProductModal");
+
+        bootstrap.Modal
+            .getOrCreateInstance(modalElement)
+            .show();
     }
 
     viewProduct(productId) {
-        const product = this.products.find(p => p.id === parseInt(productId));
+        const product = this.products.find(
+            (item) => item.productId === Number(productId)
+        );
+
         if (!product) {
-            this.showNotification('Product not found', 'error');
+            this.showNotification("Product not found.", "error");
             return;
         }
 
-        // Create modal content
-        const modalContent = this.createProductViewModal(product);
-        
-        // Create and show modal
-        this.showProductViewModal(modalContent);
-    }
+        document.getElementById("productViewModal")?.remove();
 
-    deleteProduct(productId) {
-        if (!confirm('Are you sure you want to delete this product?')) {
-            return;
-        }
+        const image = this.getProductImage(product);
+        const status = this.getStockStatus(product.quantity);
 
-        const index = this.products.findIndex(p => p.id === parseInt(productId));
-        if (index !== -1) {
-            this.products.splice(index, 1);
-            this.renderProducts();
-            this.updateStatistics();
-            this. setupStoreFilters();
-            this.populateCategorySelect();
-            this.showNotification('Product deleted successfully!', 'success');
-        }
-    }
+        const modalElement = document.createElement("div");
 
-    adjustStock(productId) {
-        const product = this.products.find(p => p.id === parseInt(productId));
-        if (!product) return;
+        modalElement.className = "modal fade";
+        modalElement.id = "productViewModal";
+        modalElement.tabIndex = -1;
 
-        const newStock = prompt(`Current stock: ${product.stock} ${product.unit}\n\nEnter new stock value:`, product.stock);
-        if (newStock !== null && !isNaN(newStock)) {
-            const stockValue = parseInt(newStock);
-            product.stock = stockValue;
-            product.status = this.calculateStockStatus(stockValue, product.threshold);
-            product.lastUpdated = new Date().toISOString().split('T')[0];
-            
-            this.renderProducts();
-            this.updateStatistics();
-            this.showNotification(`Stock updated to ${stockValue} ${product.unit}`, 'success');
-        }
-    }
-
-    // Selection Methods
-    deleteSelectedProducts() {
-        if (this.selectedProducts.size === 0) {
-            this.showNotification('No products selected', 'warning');
-            return;
-        }
-
-        if (!confirm(`Are you sure you want to delete ${this.selectedProducts.size} selected products?`)) {
-            return;
-        }
-
-        // Delete selected products
-        const idsToDelete = Array.from(this.selectedProducts);
-        idsToDelete.forEach(id => {
-            const index = this.products.findIndex(p => p.id === parseInt(id));
-            if (index !== -1) {
-                this.products.splice(index, 1);
-            }
-        });
-
-        // Clear selection and refresh
-        this.selectedProducts.clear();
-        this.renderProducts();
-        this.updateStatistics();
-        this. setupStoreFilters();
-        this.populateCategorySelect();
-        
-        this.showNotification(`${idsToDelete.length} products deleted successfully!`, 'success');
-    }
-
-    // Utility Methods
-    calculateStockStatus(stock, threshold) {
-        if (stock === 0) return 'out-of-stock';
-        if (stock < threshold) return 'low-stock';
-        return 'in-stock';
-    }
-
-    calculateMargin() {
-        const cost = parseFloat(document.getElementById('costPrice')?.value) || 0;
-        const price = parseFloat(document.getElementById('sellingPrice')?.value) || 0;
-        const marginElement = document.getElementById('profitMargin');
-        
-        if (!marginElement) return;
-        
-        if (cost > 0 && price > 0) {
-            const margin = ((price - cost) / cost * 100).toFixed(2);
-            marginElement.value = `${margin}%`;
-            
-            // Color coding
-            if (margin >= 50) marginElement.style.color = 'var(--success)';
-            else if (margin >= 20) marginElement.style.color = 'var(--warning)';
-            else marginElement.style.color = 'var(--danger)';
-            
-            marginElement.style.fontWeight = 'bold';
-        } else {
-            marginElement.value = '';
-            marginElement.style.color = '';
-            marginElement.style.fontWeight = '';
-        }
-    }
-
-    generateBarcode() {
-        const barcode = '590' + Math.floor(Math.random() * 10000000000).toString().padStart(10, '0');
-        document.getElementById('barcode').value = barcode;
-        this.showNotification(`Generated barcode: ${barcode}`, 'success');
-    }
-
-resetProductForm() {
-  const safeReset = (id) => {
-    const el = document.getElementById(id);
-    if (el) el.value = "";
-  };
-
-  safeReset("productName");
-  safeReset("categoryId");
-  safeReset("storeId");
-  safeReset("sellingPrice");
-  safeReset("currentStock");
-  safeReset("description");
-  safeReset("imagePath");
-
-  // If you use dataset to store productId for editing
-  const modal = document.getElementById("addProductModal");
-  if (modal) modal.dataset.productId = "";
-}
-
-    refreshProducts() {
-        this.renderProducts();
-        this.showNotification('Products refreshed', 'info');
-    }
-
-    syncWithHQ() {
-        const syncBtn = document.getElementById('syncButton');
-        const originalText = syncBtn.innerHTML;
-        
-        syncBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Syncing...';
-        syncBtn.disabled = true;
-        
-        setTimeout(() => {
-            this.showNotification('Synchronization completed successfully', 'success');
-            syncBtn.innerHTML = originalText;
-            syncBtn.disabled = false;
-        }, 1500);
-    }
-
-    exportToCSV() {
-        const headers = ['ID', 'Name', 'Category', 'Barcode', 'Stock', 'Price', 'Status', 'Expiry Date'];
-        const csvData = this.products.map(p => [
-            p.id,
-            p.name,
-            this.getCategoryDisplayName(p.category),
-            p.barcode,
-            p.stock,
-            p.sellingPrice,
-            this.getStatusText(p.status),
-            p.expiryDate || 'N/A'
-        ]);
-        
-        const csvContent = [headers, ...csvData]
-            .map(row => row.map(cell => `"${cell}"`).join(','))
-            .join('\n');
-        
-        this.downloadFile(csvContent, `products_${new Date().toISOString().split('T')[0]}.csv`, 'text/csv');
-        this.showNotification('Products exported to CSV successfully', 'success');
-    }
-
-    printPriceTags() {
-        const productsToPrint = this.selectedProducts.size > 0
-            ? this.products.filter(p => this.selectedProducts.has(p.id.toString()))
-            : this.products.slice(0, 10);
-
-        if (productsToPrint.length === 0) {
-            this.showNotification('No products to print', 'warning');
-            return;
-        }
-
-        const printContent = this.generatePrintContent(productsToPrint);
-        const printWindow = window.open('', '_blank');
-        printWindow.document.write(printContent);
-        printWindow.document.close();
-        
-        setTimeout(() => {
-            printWindow.print();
-            printWindow.close();
-        }, 500);
-        
-        this.showNotification(`Printing ${productsToPrint.length} price tags`, 'success');
-    }
-
-    // Helper Methods
-    getCategoryIcon(category) {
-        const icons = {
-            'all': 'boxes',
-            'food': 'utensils',
-            'beverages': 'wine-bottle',
-            'hygiene': 'soap',
-            'household': 'home',
-            'fruits': 'apple-alt',
-            'dairy': 'cheese',
-            'bakery': 'bread-slice',
-            'meat': 'drumstick-bite'
-        };
-        return icons[category] || 'box';
-    }
-
-    getCategoryDisplayName(category) {
-        if (category === 'all') return 'All Products';
-        
-        const names = {
-            'food': 'Food',
-            'beverages': 'Beverages',
-            'hygiene': 'Hygiene',
-            'household': 'Household',
-            'fruits': 'Fruits & Vegetables',
-            'dairy': 'Dairy',
-            'bakery': 'Bakery',
-            'meat': 'Meat & Poultry'
-        };
-        return names[category] || category.charAt(0).toUpperCase() + category.slice(1);
-    }
-
-    getStatusClass(status) {
-        const classes = {
-            'in-stock': 'status-in-stock',
-            'low-stock': 'status-low-stock',
-            'out-of-stock': 'status-out-of-stock'
-        };
-        return classes[status] || 'status-in-stock';
-    }
-
-    getStatusText(status) {
-        const texts = {
-            'in-stock': 'In Stock',
-            'low-stock': 'Low Stock',
-            'out-of-stock': 'Out of Stock'
-        };
-        return texts[status] || 'In Stock';
-    }
-
-    formatExpiryDate(dateString) {
-        if (!dateString) return '<span class="text-muted">N/A</span>';
-        
-        const date = new Date(dateString);
-        const today = new Date();
-        const diffTime = date - today;
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        
-        let badgeClass = 'badge bg-success';
-        let icon = '';
-        
-        if (diffDays < 0) {
-            badgeClass = 'badge bg-danger';
-            icon = '<i class="fas fa-times-circle ms-1"></i>';
-        } else if (diffDays <= 7) {
-            badgeClass = 'badge bg-warning';
-            icon = '<i class="fas fa-exclamation-triangle ms-1"></i>';
-        }
-        
-        return `
-            <span class="${badgeClass}">
-                ${date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                ${icon}
-            </span>
-        `;
-    }
-
-    createProductViewModal(product) {
-        const statusConfig = {
-            'in-stock': { class: 'success', text: 'In Stock' },
-            'low-stock': { class: 'warning', text: 'Low Stock' },
-            'out-of-stock': { class: 'danger', text: 'Out of Stock' }
-        }[product.status] || { class: 'info', text: 'Unknown' };
-
-        const margin = ((product.sellingPrice - product.costPrice) / product.costPrice * 100).toFixed(2);
-        
-        return `
+        modalElement.innerHTML = `
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
+
                     <div class="modal-header modal-header-yellow">
-                        <h5 class="modal-title"><i class="fas fa-info-circle"></i> Product Details</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        <h5 class="modal-title">
+                            <i class="fas fa-eye"></i>
+                            Product Details
+                        </h5>
+
+                        <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                        ></button>
                     </div>
+
                     <div class="modal-body">
-                        <div class="row mb-4">
-                            <div class="col-md-8">
-                                <h4 class="product-name">${product.name}</h4>
-                                ${product.brand ? `<p class="text-muted">Brand: ${product.brand}</p>` : ''}
-                                <p class="text-muted">ID: ${product.id} • Barcode: ${product.barcode || 'N/A'}</p>
-                            </div>
-                            <div class="col-md-4 text-end">
-                                <span class="badge bg-${statusConfig.class}">${statusConfig.text}</span>
-                            </div>
-                        </div>
-                        
                         <div class="row">
-                            <div class="col-md-6">
-                                <h6><i class="fas fa-info-circle"></i> Product Information</h6>
-                                <table class="table table-sm">
-                                    <tr><td><strong>Category:</strong></td><td>${this.getCategoryDisplayName(product.category)}</td></tr>
-                                    <tr><td><strong>Unit:</strong></td><td>${product.unit}</td></tr>
-                                    <tr><td><strong>Location:</strong></td><td>${product.location || 'N/A'}</td></tr>
-                                    <tr><td><strong>Tax Rate:</strong></td><td>${product.taxRate}%</td></tr>
-                                </table>
+
+                            <div class="col-md-4 text-center mb-3">
+                                <img
+                                    src="${this.escapeAttribute(image)}"
+                                    alt="${this.escapeAttribute(product.name)}"
+                                    class="img-fluid rounded"
+                                    style="
+                                        max-height: 250px;
+                                        object-fit: contain;
+                                    "
+                                    onerror="
+                                        this.onerror=null;
+                                        this.src='https://cdn-icons-png.flaticon.com/512/679/679720.png';
+                                    "
+                                >
                             </div>
-                            <div class="col-md-6">
-                                <h6><i class="fas fa-chart-line"></i> Stock & Pricing</h6>
-                                <table class="table table-sm">
-                                    <tr><td><strong>Current Stock:</strong></td><td>${product.stock} ${product.unit}</td></tr>
-                                    <tr><td><strong>Alert Threshold:</strong></td><td>${product.threshold} ${product.unit}</td></tr>
-                                    <tr><td><strong>Cost Price:</strong></td><td>${product.costPrice.toFixed(2)} MAD</td></tr>
-                                    <tr><td><strong>Selling Price:</strong></td><td>${product.sellingPrice.toFixed(2)} MAD</td></tr>
-                                    <tr><td><strong>Profit Margin:</strong></td><td>${margin}%</td></tr>
-                                </table>
-                            </div>
-                        </div>
-                        
-                        <div class="row mt-3">
-                            <div class="col-12">
-                                <h6><i class="fas fa-calendar-alt"></i> Additional Information</h6>
-                                <table class="table table-sm">
-                                    <tr><td><strong>Expiry Date:</strong></td><td>${product.expiryDate ? new Date(product.expiryDate).toLocaleDateString() : 'N/A'}</td></tr>
-                                    <tr><td><strong>Last Updated:</strong></td><td>${new Date(product.lastUpdated).toLocaleDateString()}</td></tr>
+
+                            <div class="col-md-8">
+                                <h3>
+                                    ${this.escapeHtml(product.name)}
+                                </h3>
+
+                                <table class="table table-sm mt-3">
+                                    <tbody>
+                                        <tr>
+                                            <th>Product ID</th>
+                                            <td>${product.productId}</td>
+                                        </tr>
+
+                                        <tr>
+                                            <th>Store</th>
+                                            <td>
+                                                ${this.escapeHtml(
+                                                    STORES[product.storeId] ||
+                                                    `Store #${product.storeId}`
+                                                )}
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <th>Category</th>
+                                            <td>
+                                                ${this.escapeHtml(
+                                                    CATEGORIES[product.categoryId] ||
+                                                    "Unknown"
+                                                )}
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <th>Price</th>
+                                            <td>
+                                                ${product.price.toFixed(2)} MAD
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <th>Quantity</th>
+                                            <td>${product.quantity}</td>
+                                        </tr>
+
+                                        <tr>
+                                            <th>Status</th>
+                                            <td>
+                                                <span class="badge ${this.getStatusBootstrapClass(status)}">
+                                                    ${this.getStatusText(status)}
+                                                </span>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <th>Description</th>
+                                            <td>
+                                                ${this.escapeHtml(
+                                                    product.description || "—"
+                                                )}
+                                            </td>
+                                        </tr>
+                                    </tbody>
                                 </table>
                             </div>
                         </div>
                     </div>
+
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-yellow" onclick="productsManager.editProduct(${product.id})">
-                            <i class="fas fa-edit"></i> Edit Product
+                        <button
+                            type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal"
+                        >
+                            Close
+                        </button>
+
+                        <button
+                            type="button"
+                            class="btn btn-warning"
+                            id="viewEditProductButton"
+                        >
+                            <i class="fas fa-edit"></i>
+                            Edit
                         </button>
                     </div>
                 </div>
             </div>
         `;
-    }
 
-    showProductViewModal(content) {
-        // Remove existing modal if any
-        const existingModal = document.getElementById('productViewModal');
-        if (existingModal) {
-            existingModal.remove();
-        }
-        
-        // Create modal container
-        const modalContainer = document.createElement('div');
-        modalContainer.className = 'modal fade';
-        modalContainer.id = 'productViewModal';
-        modalContainer.tabIndex = '-1';
-        modalContainer.innerHTML = content;
-        
-        // Add to body and show
-        document.body.appendChild(modalContainer);
-        const modal = new bootstrap.Modal(modalContainer);
+        document.body.appendChild(modalElement);
+
+        const modal =
+            bootstrap.Modal.getOrCreateInstance(modalElement);
+
+        modalElement
+            .querySelector("#viewEditProductButton")
+            ?.addEventListener("click", () => {
+                modal.hide();
+
+                modalElement.addEventListener(
+                    "hidden.bs.modal",
+                    () => {
+                        this.editProduct(product.productId);
+                    },
+                    { once: true }
+                );
+            });
+
+        modalElement.addEventListener(
+            "hidden.bs.modal",
+            () => {
+                modal.dispose();
+                modalElement.remove();
+            },
+            { once: true }
+        );
+
         modal.show();
-        
-        // Remove on hide
-        modalContainer.addEventListener('hidden.bs.modal', () => {
-            modalContainer.remove();
-        });
     }
 
-    generatePrintContent(products) {
-        let content = `
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <title>Price Tags - SuperMaroc</title>
-                <style>
-                    body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
-                    .price-tag-container { display: flex; flex-wrap: wrap; gap: 10px; }
-                    .price-tag { 
-                        width: 200px; 
-                        height: 100px; 
-                        border: 1px solid #000; 
-                        padding: 10px;
-                        page-break-inside: avoid;
-                    }
-                    .product-name { font-weight: bold; font-size: 14px; margin-bottom: 5px; }
-                    .price { font-size: 18px; font-weight: bold; color: #d00; margin: 10px 0; }
-                    .barcode { font-family: monospace; font-size: 12px; letter-spacing: 1px; }
-                    .store-name { font-size: 10px; color: #666; margin-top: 5px; }
-                    @media print {
-                        .no-print { display: none; }
-                        body { padding: 0; }
-                    }
-                </style>
-            </head>
-            <body>
-                <button class="no-print" onclick="window.print()" style="position: fixed; top: 20px; right: 20px; padding: 10px 20px; background: #FFD700; border: none; cursor: pointer;">Print Tags</button>
-                <h1 class="no-print">Price Tags - ${products.length} items</h1>
-                <div class="price-tag-container">
-        `;
+    async deleteProduct(productId) {
+        const product = this.products.find(
+            (item) => item.productId === Number(productId)
+        );
 
-        products.forEach(product => {
-            content += `
-                <div class="price-tag">
-                    <div class="product-name">${product.name.substring(0, 30)}</div>
-                    <div class="price">${product.sellingPrice.toFixed(2)} MAD</div>
-                    <div class="barcode">${product.barcode || '5900000000000'}</div>
-                    <div class="store-name">SuperMaroc - Agadir • ${new Date().toLocaleDateString()}</div>
-                </div>
-            `;
-        });
+        if (!product) {
+            this.showNotification("Product not found.", "error");
+            return;
+        }
 
-        content += `
-                </div>
-            </body>
-            </html>
-        `;
-        
-        return content;
+        const confirmed = confirm(
+            `Delete "${product.name}"?\n\nThis action will delete the product from the database.`
+        );
+
+        if (!confirmed) return;
+
+        try {
+            const response = await fetch(
+                `${API_URL}/${product.productId}`,
+                {
+                    method: "DELETE"
+                }
+            );
+
+            if (!response.ok) {
+                const responseText = await response.text();
+
+                throw new Error(
+                    `HTTP ${response.status}: ${responseText}`
+                );
+            }
+
+            this.showNotification(
+                "Product deleted successfully!",
+                "success"
+            );
+
+            await this.loadProducts();
+        } catch (error) {
+            console.error("deleteProduct error:", error);
+
+            this.showNotification(
+                "Unable to delete this product. It may already be referenced by an order.",
+                "error"
+            );
+        }
     }
 
-    downloadFile(content, filename, mimeType) {
-        const blob = new Blob([content], { type: mimeType });
+    clearFilters() {
+        this.currentSearchTerm = "";
+        this.currentCategoryFilter = "";
+        this.currentStatusFilter = "";
+
+        const search = document.getElementById("productSearch");
+        const category = document.getElementById("categoryFilter");
+        const status = document.getElementById("statusFilter");
+
+        if (search) search.value = "";
+        if (category) category.value = "";
+        if (status) status.value = "";
+
+        this.renderProducts();
+        this.renderCategoryBadges();
+    }
+
+    exportToCSV() {
+        const products = this.getFilteredProducts();
+
+        const rows = [
+            [
+                "ID",
+                "Name",
+                "Category",
+                "Store",
+                "Price",
+                "Quantity",
+                "Description",
+                "Image URL"
+            ],
+
+            ...products.map((product) => [
+                product.productId,
+                product.name,
+                CATEGORIES[product.categoryId] || "",
+                STORES[product.storeId] || "",
+                product.price,
+                product.quantity,
+                product.description,
+                product.imagePath
+            ])
+        ];
+
+        const csv = rows
+            .map((row) =>
+                row
+                    .map((value) =>
+                        `"${String(value ?? "").replaceAll('"', '""')}"`
+                    )
+                    .join(",")
+            )
+            .join("\n");
+
+        const blob = new Blob(
+            ["\uFEFF" + csv],
+            {
+                type: "text/csv;charset=utf-8;"
+            }
+        );
+
         const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
+        const link = document.createElement("a");
+
+        link.href = url;
+        link.download =
+            `supermaroc_products_${new Date()
+                .toISOString()
+                .slice(0, 10)}.csv`;
+
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+
         URL.revokeObjectURL(url);
+
+        this.showNotification(
+            "CSV exported successfully!",
+            "success"
+        );
     }
 
-    showNotification(message, type = 'info') {
-        // Create notification container if it doesn't exist
-        let container = document.querySelector('.notification-container');
+    resetProductForm() {
+        this.editingProductId = null;
+
+        document.getElementById("productForm")?.reset();
+
+        const title = document.getElementById("modalTitle");
+
+        if (title) {
+            title.innerHTML =
+                '<i class="fas fa-plus-circle"></i> Add New Product';
+        }
+    }
+
+    setSyncState(isLoading) {
+        const button = document.getElementById("syncButton");
+
+        if (!button) return;
+
+        button.disabled = isLoading;
+
+        button.innerHTML = isLoading
+            ? '<i class="fas fa-spinner fa-spin"></i> Syncing...'
+            : '<i class="fas fa-sync-alt"></i> Sync';
+    }
+
+    setText(id, value) {
+        const element = document.getElementById(id);
+
+        if (element) {
+            element.textContent = value;
+        }
+    }
+
+    shortenText(text, length) {
+        if (!text) return "";
+
+        return text.length > length
+            ? `${text.substring(0, length)}...`
+            : text;
+    }
+
+    escapeHtml(value) {
+        return String(value ?? "")
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;")
+            .replaceAll("'", "&#039;");
+    }
+
+    escapeAttribute(value) {
+        return this.escapeHtml(value);
+    }
+
+    showNotification(message, type = "info") {
+        let container =
+            document.querySelector(".notification-container");
+
         if (!container) {
-            container = document.createElement('div');
-            container.className = 'notification-container';
+            container = document.createElement("div");
+            container.className = "notification-container";
+
+            container.style.position = "fixed";
+            container.style.top = "20px";
+            container.style.right = "20px";
+            container.style.zIndex = "9999";
+
             document.body.appendChild(container);
         }
-        
-        // Create notification
-        const notification = document.createElement('div');
-        notification.className = `notification ${type}`;
-        notification.innerHTML = `
-            <div class="d-flex align-items-center">
-                <i class="fas fa-${this.getNotificationIcon(type)} me-2"></i>
-                <div class="flex-grow-1">${message}</div>
-                <button type="button" class="btn-close" onclick="this.parentElement.parentElement.remove()"></button>
-            </div>
-        `;
-        
-        container.appendChild(notification);
-        
-        // Auto remove after 3 seconds
-        setTimeout(() => {
-            if (notification.parentNode) {
-                notification.remove();
-            }
-        }, 3000);
-    }
 
-    getNotificationIcon(type) {
-        const icons = {
-            'success': 'check-circle',
-            'error': 'exclamation-circle',
-            'warning': 'exclamation-triangle',
-            'info': 'info-circle'
-        };
-        return icons[type] || 'info-circle';
+        const notification = document.createElement("div");
+
+        const bootstrapClass = {
+            success: "alert-success",
+            error: "alert-danger",
+            warning: "alert-warning",
+            info: "alert-info"
+        }[type] || "alert-info";
+
+        notification.className =
+            `alert ${bootstrapClass} alert-dismissible fade show shadow`;
+
+        notification.style.minWidth = "300px";
+
+        notification.innerHTML = `
+            ${this.escapeHtml(message)}
+
+            <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="alert"
+            ></button>
+        `;
+
+        container.appendChild(notification);
+
+        setTimeout(() => {
+            notification.remove();
+        }, 3500);
     }
 }
+
+window.productsManager = new ProductsManager();
+
 document.addEventListener("DOMContentLoaded", () => {
-  const productsManager = new ProductsManager();
-  window.productsManager = productsManager; // optional, only if needed globally
-  productsManager.setupEventListeners();
-  productsManager.init(); // if you have an init method
+    window.productsManager.init();
 });

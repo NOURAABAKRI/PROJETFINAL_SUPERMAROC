@@ -4,392 +4,869 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SuperMaroc - Store Management Dashboard</title>
-    <!-- Bootstrap 5 CSS -->
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Custom CSS -->
+
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-    <!-- Navigation with Store Selector -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">
-                
-                <i class="fas fa-store"></i> SuperMaroc - <span id="current-store-name">Store Dashboard</span>
-            </a>
-            <div class="d-flex align-items-center">
-                <!-- Store Selector -->
-                <div class="dropdown me-3">
-                    <button class="btn btn-yellow dropdown-toggle" type="button" id="storeSelector" data-bs-toggle="dropdown">
-                        <i class="fas fa-map-marker-alt"></i> <span id="current-store">Select Store</span>
-                    </button>
-                    <ul class="dropdown-menu" id="store-list">
-                        <li><a class="dropdown-item store-option" href="#" data-store="agadir">Agadir Store</a></li>
-                        <li><a class="dropdown-item store-option" href="#" data-store="casa">Casablanca Store</a></li>
-                        <li><a class="dropdown-item store-option" href="#" data-store="marrakech">Marrakech Store</a></li>
-                        <li><a class="dropdown-item store-option" href="#" data-store="rabat">Rabat Store</a></li>
-                    </ul>
-                </div>
-                
-                <!-- User Info -->
-                <span class="text-light me-3">
-                    <i class="fas fa-user"></i> <strong id="store-manager">Manager</strong>
-                </span>
-                
-                <!-- Sync Button -->
-                <button class="btn btn-sync" id="sync-button">
-                    <i class="fas fa-sync-alt"></i> Sync with HQ
-                </button>
-            </div>
-        </div>
-    </nav>
 
+<!-- ================= NAVBAR ================= -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
-        <div class="row">
-            <!-- Sidebar -->
-            <div class="col-md-2 p-0 sidebar">
-                <div class="pt-3">
-                    <a href="#dashboard" class="active">
-                        <i class="fas fa-tachometer-alt"></i> Dashboard
-                    </a>
-                    <a href="products.html">
-                        <i class="fas fa-boxes"></i> Products
-                    </a>
-                    <a href="sales.html">
-                        <i class="fas fa-chart-line"></i> Sales
-                    </a>
-                    <a href="alerts.html">
-                        <i class="fas fa-exclamation-triangle"></i> Alerts
-                        <span class="badge-alert float-end" id="alert-count">0</span>
-                    </a>
-                    <a href="orders.html">
-                        <i class="fas fa-shopping-cart"></i> Orders
-                    </a>
-                    <a href="suppliers.html">
-                        <i class="fas fa-truck"></i> Suppliers
-                    </a>
-                    <a href="inventory.html">
-                        <i class="fas fa-clipboard-check"></i> Inventory
-                    </a>
-                    <hr class="separator">
-                    
-                </div>
+
+        <a class="navbar-brand" href="#">
+            <i class="fas fa-store"></i>
+            SuperMaroc -
+            <span id="current-store-name">Agadir Store</span>
+        </a>
+
+        <div class="d-flex align-items-center">
+
+            <div class="dropdown me-3">
+                <button
+                    class="btn btn-yellow dropdown-toggle"
+                    type="button"
+                    id="storeSelector"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false">
+
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span id="current-store">Agadir Store</span>
+                </button>
+
+                <ul class="dropdown-menu" id="store-list">
+                    <li>
+                        <a class="dropdown-item store-option"
+                           href="#"
+                           data-store-id="1">
+                            Agadir Store
+                        </a>
+                    </li>
+
+                    <li>
+                        <a class="dropdown-item store-option"
+                           href="#"
+                           data-store-id="2">
+                            Casablanca Store
+                        </a>
+                    </li>
+                </ul>
             </div>
 
-            <!-- Main Content -->
-            <div class="col-md-10 p-4 main-content">
-                <!-- Store Header -->
-                <div class="row mb-4">
-                    <div class="col-12">
-                        <div class="card store-header-card">
-                            <div class="card-body">
-                                <div class="row align-items-center">
-                                    <div class="col-md-8">
-                                        <h2 id="store-full-name" class="store-title">Welcome to Store Dashboard</h2>
-                                        <p id="store-details" class="store-details">
-                                            <i class="fas fa-info-circle"></i> Select a store from the dropdown to begin
+            <span class="text-light me-3">
+                <i class="fas fa-user-shield"></i>
+                <strong>Administrator</strong>
+            </span>
+
+            <button class="btn btn-sync" id="sync-button">
+                <i class="fas fa-sync-alt"></i>
+                Refresh Data
+            </button>
+
+        </div>
+    </div>
+</nav>
+
+
+<!-- ================= PAGE ================= -->
+<div class="container-fluid">
+    <div class="row">
+
+        <!-- SIDEBAR -->
+        <div class="col-md-2 p-0 sidebar">
+            <div class="pt-3">
+
+                <a href="index.html" class="active">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Dashboard
+                </a>
+
+                <a href="products.html">
+                    <i class="fas fa-boxes"></i>
+                    Products
+                </a>
+
+                <a href="sales.html">
+                    <i class="fas fa-chart-line"></i>
+                    Sales
+                </a>
+
+                <a href="alerts.html">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Alerts
+                    <span class="badge-alert float-end" id="alert-count">0</span>
+                </a>
+
+                <a href="orders.html">
+                    <i class="fas fa-shopping-cart"></i>
+                    Orders
+                </a>
+
+                <a href="suppliers.html">
+                    <i class="fas fa-truck"></i>
+                    Suppliers
+                </a>
+
+                <a href="inventory.html">
+                    <i class="fas fa-clipboard-check"></i>
+                    Inventory
+                </a>
+
+                <hr class="separator">
+
+            </div>
+        </div>
+
+
+        <!-- ================= MAIN CONTENT ================= -->
+        <div class="col-md-10 p-4 main-content" id="dashboard">
+
+            <!-- STORE HEADER -->
+            <div class="row mb-4">
+                <div class="col-12">
+
+                    <div class="card store-header-card">
+                        <div class="card-body">
+
+                            <div class="row align-items-center">
+
+                                <div class="col-md-8">
+                                    <h2 id="store-full-name" class="store-title">
+                                        SuperMaroc Agadir
+                                    </h2>
+
+                                    <p id="store-details" class="store-details">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        Agadir, Maroc
+                                    </p>
+                                </div>
+
+                                <div class="col-md-4 text-end">
+
+                                    <div class="store-status">
+
+                                        <span class="badge bg-success" id="store-status">
+                                            API Online
+                                        </span>
+
+                                        <p class="store-id mt-2">
+                                            Store ID:
+                                            <span id="store-code">1</span>
                                         </p>
+
                                     </div>
-                                    <div class="col-md-4 text-end">
-                                        <div class="store-status">
-                                            <span class="badge bg-success" id="store-status">Online</span>
-                                            <p class="store-id mt-2">Store ID: <span id="store-code">---</span></p>
-                                        </div>
-                                    </div>
+
                                 </div>
+
                             </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+
+            <!-- ================= STATS ================= -->
+            <div class="row mb-4" id="stats-container">
+
+                <div class="col-md-3">
+                    <div class="card stat-card">
+                        <div class="card-body">
+
+                            <h6 class="card-title">
+                                TOTAL PRODUCTS
+                            </h6>
+
+                            <h2 class="card-value" id="stat-total-products">
+                                0
+                            </h2>
+
+                            <p class="card-change">
+                                Products in selected store
+                            </p>
+
                         </div>
                     </div>
                 </div>
 
-                <!-- Stats Cards -->
-                <div class="row mb-4" id="stats-container">
-                    <!-- Stats will be loaded dynamically -->
-                </div>
 
-                <!-- Charts Section -->
-                <div class="row mb-4">
-                    <div class="col-md-8">
-                        <div class="card">
-                            <div class="card-header card-header-yellow">
-                                <h5 class="mb-0"><i class="fas fa-chart-bar"></i> Weekly Sales Comparison</h5>
-                            </div>
-                            <div class="card-body">
-                                <div class="chart-container">
-                                    <canvas id="salesChart"></canvas>
-                                </div>
-                                <div class="text-center mt-3">
-                                    <small class="text-muted">Data updates every 30 minutes</small>
-                                </div>
-                            </div>
+                <div class="col-md-3">
+                    <div class="card stat-card">
+                        <div class="card-body">
+
+                            <h6 class="card-title">
+                                TOTAL STOCK
+                            </h6>
+
+                            <h2 class="card-value" id="stat-total-stock">
+                                0
+                            </h2>
+
+                            <p class="card-change">
+                                Available units
+                            </p>
+
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <div class="card">
-                            <div class="card-header card-header-yellow">
-                                <h5 class="mb-0"><i class="fas fa-bell"></i> Recent Alerts</h5>
+                </div>
+
+
+                <div class="col-md-3">
+                    <div class="card stat-card">
+                        <div class="card-body">
+
+                            <h6 class="card-title">
+                                OUT OF STOCK
+                            </h6>
+
+                            <h2 class="card-value" id="stat-out-stock">
+                                0
+                            </h2>
+
+                            <p class="card-change negative">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                Products requiring attention
+                            </p>
+
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="col-md-3">
+                    <div class="card stat-card">
+                        <div class="card-body">
+
+                            <h6 class="card-title">
+                                INVENTORY VALUE
+                            </h6>
+
+                            <h2 class="card-value" id="stat-inventory-value">
+                                0 MAD
+                            </h2>
+
+                            <p class="card-change">
+                                Price × available quantity
+                            </p>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <!-- ================= CHART + ALERTS ================= -->
+            <div class="row mb-4">
+
+                <!-- CHART -->
+                <div class="col-md-8">
+
+                    <div class="card">
+
+                        <div class="card-header card-header-yellow">
+                            <h5 class="mb-0">
+                                <i class="fas fa-chart-bar"></i>
+                                Products by Category
+                            </h5>
+                        </div>
+
+                        <div class="card-body">
+
+                            <div class="chart-container">
+                                <canvas id="salesChart"></canvas>
                             </div>
-                            <div class="card-body">
-                                <div class="list-group" id="alerts-list">
-                                    <!-- Alerts will be loaded here -->
+
+                            <div class="text-center mt-3">
+                                <small class="text-muted">
+                                    Live data loaded from SuperMaroc API
+                                </small>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ALERTS -->
+                <div class="col-md-4">
+
+                    <div class="card">
+
+                        <div class="card-header card-header-yellow">
+                            <h5 class="mb-0">
+                                <i class="fas fa-bell"></i>
+                                Stock Alerts
+                            </h5>
+                        </div>
+
+                        <div class="card-body">
+
+                            <div class="list-group" id="alerts-list">
+
+                                <div class="text-center py-3 text-muted">
+                                    Loading...
                                 </div>
-                                <button class="btn btn-yellow w-100 mt-3" id="view-all-alerts">
-                                    <i class="fas fa-plus"></i> View All Alerts
+
+                            </div>
+
+                            <a href="alerts.html"
+                               class="btn btn-yellow w-100 mt-3">
+
+                                <i class="fas fa-eye"></i>
+                                View All Alerts
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================= PRODUCTS ================= -->
+            <div class="row">
+
+                <div class="col-12">
+
+                    <div class="card">
+
+                        <div class="card-header card-header-yellow d-flex justify-content-between align-items-center">
+
+                            <h5 class="mb-0">
+                                <i class="fas fa-boxes"></i>
+                                Products Management
+                            </h5>
+
+                            <div>
+
+                                <button
+                                    class="btn btn-yellow btn-sm"
+                                    id="add-product-btn">
+
+                                    <i class="fas fa-plus"></i>
+                                    Add Product
                                 </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Products Management -->
-                <div class="row">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-header card-header-yellow d-flex justify-content-between align-items-center">
-                                <h5 class="mb-0"><i class="fas fa-boxes"></i> Products Management</h5>
-                                <div>
-                                    <button class="btn btn-yellow btn-sm" id="add-product-btn">
-                                        <i class="fas fa-plus"></i> Add Product
-                                    </button>
-                                    <button class="btn btn-yellow btn-sm" id="import-products-btn">
-                                        <i class="fas fa-file-import"></i> Import
-                                    </button>
-                                    <button class="btn btn-yellow btn-sm" id="export-products-btn">
-                                        <i class="fas fa-file-export"></i> Export
-                                    </button>
-                                </div>
+                                <button
+                                    class="btn btn-yellow btn-sm"
+                                    id="export-products-btn">
+
+                                    <i class="fas fa-file-export"></i>
+                                    Export
+                                </button>
+
                             </div>
-                            <div class="card-body">
-                                <div class="mb-3">
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <input type="text" class="form-control" id="product-search" placeholder="Search products...">
-                                        </div>
-                                        <div class="col-md-4">
-                                            <select class="form-select" id="category-filter">
-                                                <option value="">All Categories</option>
-                                                <option value="food">Food</option>
-                                                <option value="beverages">Beverages</option>
-                                                <option value="hygiene">Hygiene</option>
-                                                <option value="household">Household</option>
-                                                <option value="fruits">Fruits & Vegetables</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <select class="form-select" id="status-filter">
-                                                <option value="">All Status</option>
-                                                <option value="in-stock">In Stock</option>
-                                                <option value="low-stock">Low Stock</option>
-                                                <option value="out-of-stock">Out of Stock</option>
-                                                <option value="expiring">Expiring Soon</option>
-                                            </select>
-                                        </div>
+
+                        </div>
+
+
+                        <div class="card-body">
+
+                            <!-- FILTERS -->
+                            <div class="mb-3">
+
+                                <div class="row">
+
+                                    <div class="col-md-6">
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            id="product-search"
+                                            placeholder="Search products...">
                                     </div>
-                                </div>
-                                
-                                <div class="table-responsive">
-                                    <table class="table table-hover" id="productsTable">
-                                        <thead class="table-light">
-                                            <tr>
-                                                <th><i class="fas fa-hashtag"></i> ID</th>
-                                                <th><i class="fas fa-tag"></i> Product</th>
-                                                <th><i class="fas fa-folder"></i> Category</th>
-                                                <th><i class="fas fa-box"></i> Current Stock</th>
-                                                <th><i class="fas fa-bell"></i> Alert Threshold</th>
-                                                <th><i class="fas fa-money-bill"></i> Price (MAD)</th>
-                                                <th><i class="fas fa-info-circle"></i> Status</th>
-                                                <th><i class="fas fa-calendar"></i> Expiry Date</th>
-                                                <th><i class="fas fa-cogs"></i> Actions</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="productsTableBody">
-                                            <!-- Products will be loaded here -->
-                                        </tbody>
-                                    </table>
-                                </div>
-                                
-                                <div class="d-flex justify-content-between align-items-center mt-3">
-                                    <div>
-                                        <span class="text-muted">Showing <span id="product-count">0</span> products</span>
+
+
+                                    <div class="col-md-3">
+
+                                        <select
+                                            class="form-select"
+                                            id="category-filter">
+
+                                            <option value="">
+                                                All Categories
+                                            </option>
+
+                                            <option value="1">
+                                                Fruits
+                                            </option>
+
+                                            <option value="2">
+                                                Boissons
+                                            </option>
+
+                                            <option value="3">
+                                                Produits laitiers
+                                            </option>
+
+                                            <option value="4">
+                                                Épicerie
+                                            </option>
+
+                                        </select>
+
                                     </div>
-                                    <nav>
-                                        <ul class="pagination mb-0" id="pagination">
-                                            <!-- Pagination will be generated here -->
-                                        </ul>
-                                    </nav>
+
+
+                                    <div class="col-md-3">
+
+                                        <select
+                                            class="form-select"
+                                            id="status-filter">
+
+                                            <option value="">
+                                                All Status
+                                            </option>
+
+                                            <option value="in-stock">
+                                                In Stock
+                                            </option>
+
+                                            <option value="low-stock">
+                                                Low Stock
+                                            </option>
+
+                                            <option value="out-of-stock">
+                                                Out of Stock
+                                            </option>
+
+                                        </select>
+
+                                    </div>
+
                                 </div>
+
                             </div>
+
+
+                            <!-- TABLE -->
+                            <div class="table-responsive">
+
+                                <table
+                                    class="table table-hover"
+                                    id="productsTable">
+
+                                    <thead class="table-light">
+
+                                        <tr>
+
+                                            <th>
+                                                <i class="fas fa-hashtag"></i>
+                                                ID
+                                            </th>
+
+                                            <th>
+                                                <i class="fas fa-tag"></i>
+                                                Product
+                                            </th>
+
+                                            <th>
+                                                <i class="fas fa-folder"></i>
+                                                Category
+                                            </th>
+
+                                            <th>
+                                                <i class="fas fa-box"></i>
+                                                Stock
+                                            </th>
+
+                                            <th>
+                                                <i class="fas fa-money-bill"></i>
+                                                Price (MAD)
+                                            </th>
+
+                                            <th>
+                                                <i class="fas fa-info-circle"></i>
+                                                Status
+                                            </th>
+
+                                            <th>
+                                                <i class="fas fa-cogs"></i>
+                                                Actions
+                                            </th>
+
+                                        </tr>
+
+                                    </thead>
+
+
+                                    <tbody id="productsTableBody">
+
+                                        <tr>
+                                            <td colspan="7"
+                                                class="text-center py-4">
+                                                Loading products...
+                                            </td>
+                                        </tr>
+
+                                    </tbody>
+
+                                </table>
+
+                            </div>
+
+
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+
+                                <span class="text-muted">
+                                    Showing
+                                    <span id="product-count">0</span>
+                                    products
+                                </span>
+
+                            </div>
+
                         </div>
+
                     </div>
+
                 </div>
+
             </div>
+
         </div>
     </div>
+</div>
 
-    <!-- Add/Edit Product Modal -->
-    <div class="modal fade" id="productModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header modal-header-yellow">
-                    <h5 class="modal-title" id="modalTitle">Add New Product</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="productForm">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Product Name *</label>
-                                <input type="text" class="form-control" id="productName" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Barcode</label>
-                                <input type="text" class="form-control" id="productBarcode">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Category *</label>
-                                <select class="form-select" id="productCategory" required>
-                                    <option value="">Select...</option>
-                                    <option value="food">Food</option>
-                                    <option value="beverages">Beverages</option>
-                                    <option value="hygiene">Hygiene</option>
-                                    <option value="household">Household</option>
-                                    <option value="fruits">Fruits & Vegetables</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Supplier</label>
-                                <select class="form-select" id="productSupplier">
-                                    <option value="">Select supplier...</option>
-                                    <option value="supplier1">Supplier 1</option>
-                                    <option value="supplier2">Supplier 2</option>
-                                    <option value="supplier3">Supplier 3</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-4 mb-3">
-                                <label class="form-label">Purchase Price (MAD) *</label>
-                                <input type="number" class="form-control" id="productCost" step="0.01" required>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label class="form-label">Selling Price (MAD) *</label>
-                                <input type="number" class="form-control" id="productPrice" step="0.01" required>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label class="form-label">Profit Margin</label>
-                                <input type="text" class="form-control" id="productMargin" disabled>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-4 mb-3">
-                                <label class="form-label">Current Stock *</label>
-                                <input type="number" class="form-control" id="productStock" required>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label class="form-label">Alert Threshold *</label>
-                                <input type="number" class="form-control" id="productThreshold" required>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label class="form-label">Unit</label>
-                                <select class="form-select" id="productUnit">
-                                    <option value="piece">Piece</option>
-                                    <option value="kg">Kilogram</option>
-                                    <option value="liter">Liter</option>
-                                    <option value="pack">Pack</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Expiry Date</label>
-                                <input type="date" class="form-control" id="productExpiry">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Location in Store</label>
-                                <input type="text" class="form-control" id="productLocation" placeholder="Aisle 3, Shelf B">
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Description</label>
-                            <textarea class="form-control" id="productDescription" rows="2"></textarea>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-yellow" id="saveProductBtn">Save Product</button>
-                </div>
+
+<!-- ================= ADD / EDIT PRODUCT MODAL ================= -->
+<div class="modal fade" id="productModal" tabindex="-1">
+
+    <div class="modal-dialog modal-lg">
+
+        <div class="modal-content">
+
+            <div class="modal-header modal-header-yellow">
+
+                <h5 class="modal-title" id="modalTitle">
+                    Add New Product
+                </h5>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal">
+                </button>
+
             </div>
+
+
+            <div class="modal-body">
+
+                <form id="productForm">
+
+                    <!-- NAME + STORE -->
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+
+                            <label
+                                for="productName"
+                                class="form-label">
+
+                                Product Name *
+                            </label>
+
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="productName"
+                                required>
+
+                        </div>
+
+
+                        <div class="col-md-6 mb-3">
+
+                            <label
+                                for="productStore"
+                                class="form-label">
+
+                                Store *
+                            </label>
+
+                            <select
+                                class="form-select"
+                                id="productStore"
+                                required>
+
+                                <option value="1">
+                                    SuperMaroc Agadir
+                                </option>
+
+                                <option value="2">
+                                    SuperMaroc Casablanca
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- CATEGORY + PRICE -->
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+
+                            <label
+                                for="productCategory"
+                                class="form-label">
+
+                                Category *
+                            </label>
+
+                            <select
+                                class="form-select"
+                                id="productCategory"
+                                required>
+
+                                <option value="">
+                                    Select category...
+                                </option>
+
+                                <option value="1">
+                                    Fruits
+                                </option>
+
+                                <option value="2">
+                                    Boissons
+                                </option>
+
+                                <option value="3">
+                                    Produits laitiers
+                                </option>
+
+                                <option value="4">
+                                    Épicerie
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="col-md-6 mb-3">
+
+                            <label
+                                for="productPrice"
+                                class="form-label">
+
+                                Price (MAD) *
+                            </label>
+
+                            <input
+                                type="number"
+                                class="form-control"
+                                id="productPrice"
+                                min="0"
+                                step="0.01"
+                                required>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- QUANTITY -->
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+
+                            <label
+                                for="productStock"
+                                class="form-label">
+
+                                Quantity *
+                            </label>
+
+                            <input
+                                type="number"
+                                class="form-control"
+                                id="productStock"
+                                min="0"
+                                step="1"
+                                required>
+
+                        </div>
+
+
+                        <div class="col-md-6 mb-3">
+
+                            <label
+                                for="productImage"
+                                class="form-label">
+
+                                Image URL
+                            </label>
+
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="productImage"
+                                placeholder="https://...">
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- DESCRIPTION -->
+                    <div class="mb-3">
+
+                        <label
+                            for="productDescription"
+                            class="form-label">
+
+                            Description
+                        </label>
+
+                        <textarea
+                            class="form-control"
+                            id="productDescription"
+                            rows="3">
+                        </textarea>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal">
+
+                    Cancel
+                </button>
+
+                <button
+                    type="button"
+                    class="btn btn-yellow"
+                    id="saveProductBtn">
+
+                    <i class="fas fa-save"></i>
+                    Save Product
+                </button>
+
+            </div>
+
         </div>
+
     </div>
 
-    <!-- Store Details Modal -->
-    <div class="modal fade" id="storeInfoModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header modal-header-yellow">
-                    <h5 class="modal-title" id="storeModalTitle">Store Information</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="text-center mb-4">
-                        <i class="fas fa-store fa-3x text-yellow mb-3"></i>
-                        <h4 id="store-modal-name">Store Name</h4>
-                    </div>
-                    <div class="store-details-list">
-                        <div class="detail-item">
-                            <i class="fas fa-map-marker-alt"></i>
-                            <div>
-                                <strong>Address</strong>
-                                <p id="store-address">Loading...</p>
-                            </div>
-                        </div>
-                        <div class="detail-item">
-                            <i class="fas fa-phone"></i>
-                            <div>
-                                <strong>Phone</strong>
-                                <p id="store-phone">Loading...</p>
-                            </div>
-                        </div>
-                        <div class="detail-item">
-                            <i class="fas fa-user-tie"></i>
-                            <div>
-                                <strong>Manager</strong>
-                                <p id="store-manager-details">Loading...</p>
-                            </div>
-                        </div>
-                        <div class="detail-item">
-                            <i class="fas fa-calendar-alt"></i>
-                            <div>
-                                <strong>Opening Date</strong>
-                                <p id="store-opening">Loading...</p>
-                            </div>
-                        </div>
-                        <div class="detail-item">
-                            <i class="fas fa-chart-line"></i>
-                            <div>
-                                <strong>Monthly Target</strong>
-                                <p id="store-target">Loading...</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-yellow" data-bs-dismiss="modal">Close</button>
-                </div>
+</div>
+
+
+<!-- ================= VIEW PRODUCT MODAL ================= -->
+<div class="modal fade" id="viewProductModal" tabindex="-1">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+
+            <div class="modal-header modal-header-yellow">
+
+                <h5 class="modal-title">
+                    Product Details
+                </h5>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal">
+                </button>
+
             </div>
+
+
+            <div class="modal-body">
+
+                <div class="text-center mb-3">
+
+                    <img
+                        id="viewProductImage"
+                        src=""
+                        alt="Product"
+                        class="img-fluid rounded"
+                        style="max-height: 200px; display: none;">
+
+                </div>
+
+                <p>
+                    <strong>ID:</strong>
+                    <span id="viewProductId"></span>
+                </p>
+
+                <p>
+                    <strong>Name:</strong>
+                    <span id="viewProductName"></span>
+                </p>
+
+                <p>
+                    <strong>Store:</strong>
+                    <span id="viewProductStore"></span>
+                </p>
+
+                <p>
+                    <strong>Category:</strong>
+                    <span id="viewProductCategory"></span>
+                </p>
+
+                <p>
+                    <strong>Price:</strong>
+                    <span id="viewProductPrice"></span>
+                </p>
+
+                <p>
+                    <strong>Quantity:</strong>
+                    <span id="viewProductQuantity"></span>
+                </p>
+
+                <p>
+                    <strong>Description:</strong>
+                    <span id="viewProductDescription"></span>
+                </p>
+
+            </div>
+
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="btn btn-yellow"
+                    data-bs-dismiss="modal">
+
+                    Close
+                </button>
+
+            </div>
+
         </div>
+
     </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Custom JS -->
-    <script src="script.js"></script>
+</div>
+
+
+<!-- ================= SCRIPTS ================= -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="script.js"></script>
+
 </body>
 </html>
