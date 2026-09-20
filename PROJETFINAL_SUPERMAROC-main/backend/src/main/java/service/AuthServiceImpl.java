@@ -16,7 +16,7 @@ public class AuthServiceImpl extends UnicastRemoteObject implements AuthService 
 
     @Override
     public UserDTO login(String username, String password) throws RemoteException {
-        String sql = "SELECT role FROM employees WHERE username=? AND password=?";
+        String sql = "SELECT employee_id, role FROM employees WHERE username=? AND password=?";
 
         try (Connection c = DBConnection.getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
@@ -26,7 +26,7 @@ public class AuthServiceImpl extends UnicastRemoteObject implements AuthService 
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
-                return new UserDTO(1, rs.getString("role").toUpperCase());
+                return new UserDTO(rs.getInt("employee_id"), rs.getString("role").toUpperCase());
             }
         } catch (Exception e) {
             e.printStackTrace();
