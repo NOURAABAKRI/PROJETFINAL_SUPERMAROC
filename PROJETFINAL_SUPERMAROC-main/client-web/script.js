@@ -214,9 +214,9 @@ if (cardList) {
     if (btn) btn.onclick = () => modal.style.display = "block";
     if (span) span.onclick = () => modal.style.display = "none";
 
-    window.onclick = function(event) {
-        if (event.target == modal) modal.style.display = "none";
-    };
+    window.addEventListener("click", function(event) {
+        if (event.target === modal) modal.style.display = "none";
+    });
 
     if (form) {
         form.addEventListener("submit", function(e) {
@@ -345,11 +345,11 @@ if (cardList) {
     };
 
     // Close when clicking outside
-    window.onclick = (e) => {
+    window.addEventListener("click", (e) => {
         if (e.target === loginModal) loginModal.style.display = "none";
         if (e.target === signupModal) signupModal.style.display = "none";
         if (e.target === profileModal) profileModal.style.display = "none";
-    };
+    });
 
     // =============== SIGNUP ===============
     // =============== SIGNUP ===============
