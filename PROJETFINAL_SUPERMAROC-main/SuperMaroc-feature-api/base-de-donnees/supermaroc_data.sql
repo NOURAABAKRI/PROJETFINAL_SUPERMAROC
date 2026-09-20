@@ -121,7 +121,6 @@ CREATE TABLE `employees` (
 
 LOCK TABLES `employees` WRITE;
 /*!40000 ALTER TABLE `employees` DISABLE KEYS */;
-INSERT INTO `employees` VALUES (1,1,'miniadmin_agadir','***REMOVED***','admin','2025-11-23 17:17:53'),(2,2,'miniadmin_casa','***REMOVED***','admin','2025-11-23 17:17:53');
 /*!40000 ALTER TABLE `employees` ENABLE KEYS */;
 UNLOCK TABLES;
 
