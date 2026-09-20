@@ -6,6 +6,7 @@ import service.AdminServiceImpl;
 import service.AuthServiceImpl;
 import service.ClientService;
 import service.ClientServiceImpl;
+import service.OrderServiceImpl;
 import util.DBConnection;
 import java.sql.Connection;
 
@@ -17,6 +18,7 @@ public class RMIServer {
             reg.rebind("AuthService", new AuthServiceImpl());
             reg.rebind("ClientService", new ClientServiceImpl());
             reg.rebind("AdminService", new AdminServiceImpl());
+            reg.rebind("OrderService", new OrderServiceImpl());
 
             System.out.println("Serveur RMI démarré");
 // Test de connexion JDBC

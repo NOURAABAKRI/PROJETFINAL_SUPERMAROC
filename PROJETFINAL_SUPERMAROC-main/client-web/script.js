@@ -85,6 +85,8 @@ if (cardList) {
 
                     // ⚠️ Adapter les champs selon ton DTO
                     addToCart({
+                        productId: product.productId,
+                        storeId: product.storeId,
                         name: product.name,
                         price: product.price,
                         image: product.imagePath
@@ -100,7 +102,9 @@ if (cardList) {
 
     // ================== AJOUTER AU PANIER ==================
     function addToCart(product) {
-        const existingItem = cartItems.find(item => item.name === product.name);
+        const existingItem = cartItems.find(
+            item => item.productId === product.productId
+        );
 
         if (existingItem) {
             existingItem.qty++;
@@ -218,22 +222,65 @@ if (cardList) {
         if (event.target === modal) modal.style.display = "none";
     });
 
-    if (form) {
-        form.addEventListener("submit", function(e) {
-            e.preventDefault();
+if (form) {
+    form.addEventListener("submit", async function(e) {
+        e.preventDefault();
 
-            const name = document.getElementById("name").value;
-            const address = document.getElementById("address").value;
-            const phone = document.getElementById("phone").value;
+        if (cartItems.length === 0) {
+            alert("Votre panier est vide.");
+            return;
+        }
 
-            alert(`Merci ${name}, vos informations ont été envoyées !
-                Adresse : ${address}
-                Téléphone : ${phone}`);
+const storeIds = [...new Set(cartItems.map(item => item.storeId))];
+
+if (storeIds.length > 1) {
+    alert(
+        "Votre panier contient des produits de magasins différents.\n" +
+        "Veuillez passer une commande séparée pour chaque magasin."
+    );
+    return;
+}
+        const orderRequest = {
+            items: cartItems.map(item => ({
+                productId: item.productId,
+                quantity: item.qty
+            }))
+        };
+
+        try {
+            const response = await fetch("http://localhost:8888/api/orders", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(orderRequest)
+            });
+
+            if (!response.ok) {
+                throw new Error("La commande n'a pas pu être créée.");
+            }
+
+            const result = await response.json();
+
+            alert(
+                `Commande confirmée !\n` +
+                `Numéro : ${result.orderId}\n` +
+                `Total : ${result.totalPrice} DH`
+            );
+
+            cartItems = [];
+            saveCart();
+            updateCartHTML();
 
             form.reset();
             modal.style.display = "none";
-        });
-    }
+
+        } catch (error) {
+            console.error("Checkout error:", error);
+            alert("Erreur lors de la commande. Veuillez réessayer.");
+        }
+    });
+}
 
 
     // ================== RECHERCHE PRODUITS ==================
