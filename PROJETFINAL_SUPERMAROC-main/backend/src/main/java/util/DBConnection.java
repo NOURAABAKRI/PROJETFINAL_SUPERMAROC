@@ -6,9 +6,9 @@ import java.sql.DriverManager;
 public class DBConnection {
 
     private static final String URL =
-        "jdbc:mysql://localhost:3306/supermaroc?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC";
-    private static final String USER = "root";
-    private static final String PASSWORD = "***REMOVED*** "; // mets ton mot de passe
+    "jdbc:mysql://localhost:3306/supermaroc?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC";
+    private static final String USER = System.getenv().getOrDefault("DB_USERNAME", "root");
+    private static final String PASSWORD = System.getenv("DB_PASSWORD");
 
     public static Connection getConnection() {
         try {
